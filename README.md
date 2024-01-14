@@ -23,8 +23,45 @@ Testing
 
 To run all tests type (use -s for debug show of prints ;) ):
 
-    pytest tests
+    python -m pytest tests
 
 To run specific test put path to the test file:
 
-    pytest tests/t_stenparser/test_sejm_parser.py
+    python -m pytest tests/t_stenparser/test_sejm_parser.py
+
+Format
+======
+
+We use XML-alike format to store parsed data.
+
+Here is the human readable description of the format:
+
+!!! TODO tutaj trzeba dać prawilny opis XML - na razie to jest notatka dla mnie, abym wiedział do czego zmierzam :)
+
+  <meta>
+     <!-- metadata about given event -->
+     <date>YYYY-MM-DD</date> <!-- date of the event -->
+  </meta>
+
+  <speakers>
+     <!-- list of speakers, including interruptions -->
+     <speaker id="{id only valid in one file}>
+       <raw_name>
+     </speaker>
+
+  </speakers>
+
+  <transcript>
+    <utter speaker_raw_name="{raw name as extracted from PDF}" speaker_id="{reference to speakers}">
+       <!-- Here is the text of the given utterance -->
+       Lorem ipsum lorem ipsum lorem ipsum
+       <interruption speaker_raw_name="{raw name as extracted from PDF}" speaker_id="{}">
+       </interruption>
+       Lorem ipsum lorem ipsum lorem ipsum
+       <reaction name="" raw_name="{raw name extracted from transcript file}" />
+       Lorem ipsum lorem ipsum lorem ipsum
+    </utter>
+    <utter>
+       ...
+    </utter>
+  </transcript>

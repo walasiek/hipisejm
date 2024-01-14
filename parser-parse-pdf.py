@@ -2,13 +2,20 @@
 
 import argparse
 import logging
-logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] %(asctime)s\t%(message)s')
+import os
+logging.basicConfig(level=os.environ.get('LOGLEVEL', 'INFO').upper(), format='[%(levelname)s] %(asctime)s\t%(message)s')
+
+
+from hipisejm.stenparser.sejm_parser import SejmParser
 
 
 def parse_arguments():
     """parse command line arguments"""
     parser = argparse.ArgumentParser(
-        description='Parses stenograms from PDF files from X Sejm RP. Available on: https://www.sejm.gov.pl/sejm10.nsf/stenogramy.xsp'
+        description='Parses stenograms from PDF files from X Sejm RP. Available on: https://www.sejm.gov.pl/sejm10.nsf/stenogramy.xsp\n\n'
+        + 'Usage example:\n'
+        + '  ./parser-parse-pdf.py -i resources/test_data/01_j_ksiazka.pdf -o parsed.xml',
+        formatter_class=argparse.RawTextHelpFormatter
     )
 
     parser.add_argument(
@@ -28,6 +35,10 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
+
+    parser = SejmParser()
+    parser.parse_file(args.input)
+    # TODO
 
 
 main()

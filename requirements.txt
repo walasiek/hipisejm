@@ -1,3 +1,4 @@
+pytest
 pandas
 numpy
 ipython
@@ -7,3 +8,4 @@ tqdm
 jupyter_dashboards
 spacy
 scikit-learn
+pypdf
