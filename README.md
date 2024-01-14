@@ -38,30 +38,30 @@ Here is the human readable description of the format:
 
 !!! TODO tutaj trzeba dać prawilny opis XML - na razie to jest notatka dla mnie, abym wiedział do czego zmierzam :)
 
-  <meta>
-     <!-- metadata about given event -->
-     <date>YYYY-MM-DD</date> <!-- date of the event -->
-  </meta>
+    <meta>
+       <!-- metadata about given event -->
+       <date>YYYY-MM-DD</date> <!-- date of the event -->
+    </meta>
 
-  <speakers>
-     <!-- list of speakers, including interruptions -->
-     <speaker id="{id only valid in one file}>
-       <raw_name>
-     </speaker>
+    <speakers>
+       <!-- list of speakers, including interruptions -->
+       <speaker id="{id only valid in one file}>
+         <raw_name>
+       </speaker>
 
-  </speakers>
+    </speakers>
 
-  <transcript>
-    <utter speaker_raw_name="{raw name as extracted from PDF}" speaker_id="{reference to speakers}">
-       <!-- Here is the text of the given utterance -->
-       Lorem ipsum lorem ipsum lorem ipsum
-       <interruption speaker_raw_name="{raw name as extracted from PDF}" speaker_id="{}">
-       </interruption>
-       Lorem ipsum lorem ipsum lorem ipsum
-       <reaction name="" raw_name="{raw name extracted from transcript file}" />
-       Lorem ipsum lorem ipsum lorem ipsum
-    </utter>
-    <utter>
-       ...
-    </utter>
-  </transcript>
+    <transcript>
+      <utter speaker_raw_name="{raw name as extracted from PDF}" speaker_id="{reference to speakers}">
+         <!-- Here is the text of the given utterance -->
+         Lorem ipsum lorem ipsum lorem ipsum
+         <interruption speaker_raw_name="{raw name as extracted from PDF}" speaker_id="{}">
+         </interruption>
+         Lorem ipsum lorem ipsum lorem ipsum
+         <reaction name="" raw_name="{raw name extracted from transcript file}" />
+         Lorem ipsum lorem ipsum lorem ipsum
+      </utter>
+      <utter>
+         ...
+      </utter>
+    </transcript>
