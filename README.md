@@ -33,35 +33,12 @@ Format
 ======
 
 We use XML-alike format to store parsed data.
+Each day is stored in the separate file (so in general one PDF transcription will create one XML file).
 
-Here is the human readable description of the format:
+You will find XSD schema for the corpus output file in resources/hipisejm-transcript-schema.xsd
 
-!!! TODO tutaj trzeba dać prawilny opis XML - na razie to jest notatka dla mnie, abym wiedział do czego zmierzam :)
+You can find example of the parsed file in resources/hipisejm-transcript-example.xml
 
-    <meta>
-       <!-- metadata about given event -->
-       <date>YYYY-MM-DD</date> <!-- date of the event -->
-    </meta>
+Hint, to validate your XML file:
 
-    <speakers>
-       <!-- list of speakers, including interruptions -->
-       <speaker id="{id only valid in one file}>
-         <raw_name>
-       </speaker>
-
-    </speakers>
-
-    <transcript>
-      <utter speaker_raw_name="{raw name as extracted from PDF}" speaker_id="{reference to speakers}">
-         <!-- Here is the text of the given utterance -->
-         Lorem ipsum lorem ipsum lorem ipsum
-         <interruption speaker_raw_name="{raw name as extracted from PDF}" speaker_id="{}">
-         </interruption>
-         Lorem ipsum lorem ipsum lorem ipsum
-         <reaction name="" raw_name="{raw name extracted from transcript file}" />
-         Lorem ipsum lorem ipsum lorem ipsum
-      </utter>
-      <utter>
-         ...
-      </utter>
-    </transcript>
+    xmllint --schema resources/hipisejm-transcript-schema.xsd resources/hipisejm-transcript-example.xml --noout

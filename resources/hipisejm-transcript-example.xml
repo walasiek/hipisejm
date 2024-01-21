@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parliament_session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:noNamespaceSchemaLocation="ParliamentSessionSchema.xsd"
+                    date="2024-01-21" session_number="10">
+  <session_officials>
+    <official title="Speaker of the Sejm" name="Szymon Hołownia"/>
+    <official title="Deputy Speaker" name="Monika Wielichowska"/>
+    <!-- Additional officials -->
+  </session_officials>
+  <speakers>
+    <speaker id="20240121_s1" name="Jan Kowalski" role="Member of Parliament"/>
+    <speaker id="20240121_s2" name="Anna Nowak"/>
+    <!-- More speakers -->
+  </speakers>
+  <content>
+    <speech speaker_id="20240121_s1">
+      <!-- Text of the speech by Jan Kowalski -->
+      <interruption by="20240121_s2">
+        <!-- Text of the interruption by Anna Nowak -->
+      </interruption>
+      <reaction type="applause"/>
+      <!-- Continuation of the speech by Jan Kowalski -->
+    </speech>
+    <break start_time="10:30" end_time="10:45"/>
+    <!-- More speeches and breaks -->
+  </content>
+</parliament_session>

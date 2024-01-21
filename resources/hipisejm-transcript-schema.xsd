@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="parliament_session" type="parliamentSessionType"/>
+
+  <!-- Root Element Definition -->
+  <xs:complexType name="parliamentSessionType">
+      <xs:sequence>
+        <xs:element name="session_officials" type="officialsType" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="speakers" type="speakersType" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="content" minOccurs="1" maxOccurs="1">
+          <xs:complexType>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+              <xs:element name="speech" type="speechType"/>
+              <xs:element name="break" type="breakType"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="date" type="xs:date" use="required"/>
+      <xs:attribute name="session_number" type="xs:integer" use="required"/>
+  </xs:complexType>
+
+  <!-- Session Officials -->
+  <xs:complexType name="officialsType">
+    <xs:sequence>
+      <xs:element name="official" minOccurs="1" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="title" type="xs:string" use="required"/>
+          <xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Speakers -->
+  <xs:complexType name="speakersType">
+    <xs:sequence>
+      <xs:element name="speaker" minOccurs="1" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="id" type="xs:string" use="required"/>
+          <xs:attribute name="name" type="xs:string" use="required"/>
+          <xs:attribute name="role" type="xs:string" use="optional"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Speech Type -->
+  <xs:complexType name="speechType">
+    <xs:sequence>
+      <xs:element name="interruption" minOccurs="0" maxOccurs="unbounded" type="interruptionType"/>
+      <xs:element name="reaction" minOccurs="0" maxOccurs="unbounded" type="reactionType"/>
+    </xs:sequence>
+    <xs:attribute name="speaker_id" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <!-- Interruption Type -->
+  <xs:complexType name="interruptionType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="by" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Reaction Type -->
+  <xs:complexType name="reactionType">
+    <xs:attribute name="type" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <!-- Break Type -->
+  <xs:complexType name="breakType">
+    <xs:attribute name="start_time" type="xs:string" use="required"/>
+    <xs:attribute name="end_time" type="xs:string" use="required"/>
+  </xs:complexType>
+
+</xs:schema>
