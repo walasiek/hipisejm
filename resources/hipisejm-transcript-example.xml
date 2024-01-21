@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <parliament_session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:noNamespaceSchemaLocation="ParliamentSessionSchema.xsd"
+                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd"
                     date="2024-01-21" session_number="10">
   <session_officials>
     <official title="Speaker of the Sejm" name="Szymon Hołownia"/>
