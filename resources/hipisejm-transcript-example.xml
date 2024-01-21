@@ -10,6 +10,7 @@
   <speakers>
     <speaker id="20240121_s1" name="Jan Kowalski" role="Member of Parliament"/>
     <speaker id="20240121_s2" name="Anna Nowak"/>
+    <speaker id="20240121_generic" name="Głos z sali" role="Unidentified Speaker"/>
     <!-- More speakers -->
   </speakers>
   <content>
