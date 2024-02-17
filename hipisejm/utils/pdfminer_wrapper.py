@@ -3,6 +3,8 @@ Wraps some PDFMiner functions to simplify text extraction
 """
 import re
 import logging
+from typing import BinaryIO, Tuple
+from functools import lru_cache
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTTextContainer, LAParams, LTTextBox, LTTextLine, LTChar
 from pdfminer.pdfparser import PDFParser
@@ -10,9 +12,9 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
-from typing import BinaryIO
 
 
+@lru_cache(maxsize=100)
 def clean_fontname(fontname: str) -> str:
     """
     Returns fontname without hashed prefix, e.g.:
@@ -22,15 +24,81 @@ def clean_fontname(fontname: str) -> str:
     return fontname
 
 
+@lru_cache(maxsize=100)
+def get_fontname_bold_italic_flags(fontname: str) -> Tuple[bool, bool]:
+    """ Returns (flag_bold, flag_italic) for given PDF fontname"""
+    flag_bold = False
+    flag_italic = False
+
+    match = re.search(r"-([^-]+)$", fontname)
+    if match:
+        matched = match.group(1).lower()
+        if "bold" in matched:
+            flag_bold = True
+        if "italic" in matched:
+            flag_italic = True
+
+    return (flag_bold, flag_italic)
+
+
+class PDFText:
+    """
+    This represents continuous text fragment, with the same fontname and height.
+    """
+    def __init__(self, text: str, fontname: str, height: float):
+        self.text = text
+        self.fontname = fontname
+        self.height = height
+        self.bold, self.italic = get_fontname_bold_italic_flags(self.fontname)
+
+    def __str__(self):
+        return f"{self.text}|(font:{self.fontname},height:{self.height})"
+
+
+class PDFLineBreak:
+    """
+    Represents line break.
+    """
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return "<PDFLineBreak>"
+
+
+class PDFTextBoxBreak:
+    """
+    Represents text box break.
+    """
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return "<PDFTextBoxBreak>"
+
+
+class PDFPageBreak:
+    """
+    Represents page break.
+    """
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return "<PDFPageBreak>"
+
+
 class PDFMinerWrapper:
-    def __init__(self, file_to_parse: BinaryIO, laparams: LAParams = None):
+    def __init__(self, file_to_parse: BinaryIO, laparams: LAParams = None, print_parse: bool = False):
         """
         params:
         filepath - file to be parsed
         laparams - if None, then uses PDFMiner default LAParams, otherwise uses LAParams provided here
+        print_parse - if True then prints parsed entries to stdout which helps debuging
         """
         self.parsed_data = []
         self.number_of_pages = 0
+        self.print_parse = print_parse
 
         self.pdf_parser = PDFParser(file_to_parse)
         self.resource_manager = PDFResourceManager()
@@ -58,7 +126,7 @@ class PDFMinerWrapper:
                 if isinstance(element, LTTextContainer):
                     self._parse_text_container(element)
 
-            print("########## END PAGE ##########")
+            self._add_to_parsed_data(PDFPageBreak())
 
     def _parse_text_container(self, text_container):
         # TODO
@@ -74,20 +142,26 @@ class PDFMinerWrapper:
                 if not isinstance(character, LTChar):
                     continue
 
-                if (current_fontname is not None) and (current_fontname != character.fontname):
-                    entry = ("".join(chunk), current_fontname, text_line.height)
-                    self.parsed_data.append(entry)
-                    print(entry)
-                    print("FONTFONT" + "\t" + entry[1])
-                    current_fontname = character.fontname
+                character_fontname = clean_fontname(character.fontname)
+                if (current_fontname is not None) and (current_fontname != character_fontname):
+                    self._new_pdf_text(chunk, current_fontname, text_line)
+                    current_fontname = character_fontname
                     chunk = [character.get_text()]
                 else:
-                    current_fontname = character.fontname
+                    current_fontname = character_fontname
                     chunk.append(character.get_text())
             if len(chunk) > 0:
-                entry = ("".join(chunk), current_fontname, text_line.height)
-                self.parsed_data.append(entry)
-                print(entry)
+                self._new_pdf_text(chunk, current_fontname, text_line)
 
-            print("------ END LINE--------")
-        print("==========END BOX==========")
+            self._add_to_parsed_data(PDFLineBreak())
+        self._add_to_parsed_data(PDFTextBoxBreak())
+
+    def _new_pdf_text(self, chunk, current_fontname, text_line):
+        text = "".join(chunk)
+        entry = PDFText(text, current_fontname, text_line.height)
+        self._add_to_parsed_data(entry)
+
+    def _add_to_parsed_data(self, what):
+        if self.print_parse:
+            print(str(what))
+        self.parsed_data.append(what)

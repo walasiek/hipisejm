@@ -31,6 +31,9 @@ class SejmParser:
             laparams = LAParams(
                 char_margin=self.PDF_CHAR_MARGIN,
                 line_margin=self.PDF_LINE_MARGIN)
-            pdfminer_wrapper = PDFMinerWrapper(pdffile, laparams=laparams)
+            pdfminer_wrapper = PDFMinerWrapper(
+                pdffile,
+                laparams=laparams,
+                print_parse=True)  # for DEBUG, in real life set to False!
             pdfminer_wrapper.parse()
             self.number_of_pages = pdfminer_wrapper.number_of_pages
