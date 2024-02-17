@@ -1,6 +1,7 @@
 """
 Wraps some PDFMiner functions to simplify text extraction
 """
+import re
 import logging
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTTextContainer, LAParams, LTTextBox, LTTextLine, LTChar
@@ -10,6 +11,15 @@ from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 from typing import BinaryIO
+
+
+def clean_fontname(fontname: str) -> str:
+    """
+    Returns fontname without hashed prefix, e.g.:
+    UYJZJF+CentSchbookEU-Normal -> CentSchbookEU-Normal
+    """
+    fontname = re.sub(r"^[A-Z]+[+]", "", fontname)
+    return fontname
 
 
 class PDFMinerWrapper:
@@ -51,6 +61,10 @@ class PDFMinerWrapper:
             print("########## END PAGE ##########")
 
     def _parse_text_container(self, text_container):
+        # TODO
+        # 1. zrobić test na odrzucanie containerów, linii
+        # np. odrzucić nagłówki
+        # 2. dodać różne logiczne znaczniki np. koniec linii, koniec kontenera, koniec strony
         for text_line in text_container:
 
             current_fontname = None
@@ -64,6 +78,7 @@ class PDFMinerWrapper:
                     entry = ("".join(chunk), current_fontname, text_line.height)
                     self.parsed_data.append(entry)
                     print(entry)
+                    print("FONTFONT" + "\t" + entry[1])
                     current_fontname = character.fontname
                     chunk = [character.get_text()]
                 else:
