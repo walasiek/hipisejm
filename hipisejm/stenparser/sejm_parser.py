@@ -1,82 +1,91 @@
 import re
 import logging
-from pypdf import PdfReader
+from pdfminer.high_level import extract_pages
+from pdfminer.layout import LTTextContainer, LAParams, LTTextBox, LTTextLine, LTChar
+from pdfminer.pdfparser import PDFParser
+from pdfminer.converter import PDFPageAggregator
+from pdfminer.pdfdocument import PDFDocument
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer.pdfpage import PDFPage
 
 
 class SejmParser:
+    # need to force line merge due to two column layout to fix text order
+    # inspired by: https://github.com/pdfminer/pdfminer.six/issues/276#issuecomment-518010761
+    PDF_LINE_MARGIN = 2.0
+    PDF_CHAR_MARGIN = 4.0
+
     """
     Parses transcripts from: https://www.sejm.gov.pl/sejm10.nsf/stenogramy.xsp
     """
     def __init__(self):
-        self.reader = None
         self.number_of_pages = 0
-        self.parsing_state = {}
-        self._set_empty_parsing_state()
+        self.pdf_parser = None
 
     def parse_file(self, filepath: str):
         """
         Parses file given from filepath.
         Returns: ???
         """
-        self.reader = PdfReader(filepath)
-        self.number_of_pages = len(self.reader.pages)
+        self.number_of_pages = 0
+        raw_results = self._parse_pdf_to_raw(filepath)
 
-        for page_index in range(self.number_of_pages):
-            self._parse_page(page_index)
+    def _parse_pdf_to_raw(self, filepath: str):
+        raw_results = []
+        with open(filepath, "rb") as pdffile:
+            self.pdf_parser = PDFParser(pdffile)
+            document = PDFDocument(self.pdf_parser)
+            resource_manager = PDFResourceManager()
+            laparams = LAParams(
+                char_margin=self.PDF_CHAR_MARGIN,
+                line_margin=self.PDF_LINE_MARGIN)
 
-    def _set_empty_parsing_state(self):
-        self.parsing_state['in_speeches'] = True
-        self.parsing_state['current_speaker_raw_name'] = None
-        self.parsing_state['current_speaker_speech_items'] = []
+            dev = PDFPageAggregator(resource_manager, laparams=laparams)
+            intepreter = PDFPageInterpreter(resource_manager, dev)
 
-    def _parse_page(self, page_index):
-        logging.debug("Parsing PDF page %i out of %i", page_index + 1, self.number_of_pages)
-        current_page = self.reader.pages[page_index]
-        raw_text = self._extract_text_from_page(current_page)
+            for pdf_page in PDFPage.create_pages(document):
+                self.number_of_pages += 1
 
-        # tutaj usunąć nagłówek i stopkę
-        # ominąć pierwsze strony ze spisem treści
-        # stworzyć klasę wizytatora który zachowuje formatowanie <i>
-        # następnie sparsować
+                # debug
+                #if self.number_of_pages > 10:
+                #    break
+                logging.debug("Parsing PDF page %i", self.number_of_pages)
 
-        # todo debug
-        print("")
-        print(raw_text)
-        print("")
+                intepreter.process_page(pdf_page)
+                layout = dev.get_result()
 
-    def _extract_text_from_page(self, page):
-        visitor_output = []
-        def visitor_body(text, cm, tm, font_dict, font_size):
-            # ignore header and footer HOW????
-            y = tm[5]
-            if not (y < 788.0):
-                return
+                for element in layout:
+                    if isinstance(element, LTTextContainer):
+                        self._parse_text_container(raw_results, element)
 
-            is_bold = False
-            is_italic = False
+                print("########## END PAGE ##########")
 
-            if font_dict is not None:
-                base_font = font_dict.get("/BaseFont", "")
-                if "-Italic" in base_font:
-                    is_italic = True
-                if "-Bold" in base_font:
-                    is_bold = True
 
-            added_tags = []
-            if is_bold:
-                added_tags.append("b")
-            if is_italic:
-                added_tags.append("i")
+    def _parse_text_container(self, raw_results, text_container):
+        for text_line in text_container:
 
-            #print("DUPA", added_tags, text)
-            added_prefix = "".join([f"<{t}>" for t in added_tags])
-            added_suffix = "".join([f"</{t}>" for t in reversed(added_tags)])
+            current_fontname = None
+            chunk = []
 
-            out_text = text
-            if not re.match(r"^\s*$", text):
-                out_text = f"{added_prefix}{text}{added_suffix}"
-            visitor_output.append(out_text)
+            for character in text_line:
+                if not isinstance(character, LTChar):
+                    continue
 
-        page.extract_text(visitor_text=visitor_body)
-        text = "".join(visitor_output)
-        return text
+                if (current_fontname is not None) and (current_fontname != character.fontname):
+                    entry = ("".join(chunk), current_fontname, text_line.height)
+                    raw_results.append(entry)
+                    print(entry)
+                    current_fontname = character.fontname
+                    chunk = [character.get_text()]
+                else:
+                    current_fontname = character.fontname
+                    chunk.append(character.get_text())
+            if len(chunk) > 0:
+                entry = ("".join(chunk), current_fontname, text_line.height)
+                raw_results.append(entry)
+                print(entry)
+
+            print("------ END LINE--------")
+        print("==========END BOX==========")
+
+        return raw_results

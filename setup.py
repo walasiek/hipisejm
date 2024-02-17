@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='hipisejm',
-    version='0.1.3',
+    version=__version__,
     author='Marcin Walas',
     author_email='kontakt@marcinwalas.pl',
     packages=[
@@ -21,6 +21,6 @@ setup(
         "pytest",
         "pandas",
         "numpy",
-        "pypdf",
+        "pdfminer.six",
     ],
 )

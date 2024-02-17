@@ -8,4 +8,4 @@ tqdm
 jupyter_dashboards
 spacy
 scikit-learn
-pypdf
+pdfminer.six
