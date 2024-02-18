@@ -3,9 +3,8 @@ pandas
 numpy
 ipython
 ipykernel
+notebook==6.4.12
+traitlets==5.9.0
 jupyter_contrib_nbextensions
 tqdm
-jupyter_dashboards
-spacy
-scikit-learn
 pdfminer.six

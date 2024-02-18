@@ -89,16 +89,18 @@ class PDFPageBreak:
 
 
 class PDFMinerWrapper:
-    def __init__(self, file_to_parse: BinaryIO, laparams: LAParams = None, print_parse: bool = False):
+    def __init__(self, file_to_parse: BinaryIO, laparams: LAParams = None, print_parse: bool = False, page_limit: int = 0):
         """
         params:
         filepath - file to be parsed
         laparams - if None, then uses PDFMiner default LAParams, otherwise uses LAParams provided here
         print_parse - if True then prints parsed entries to stdout which helps debuging
+        page_limit - if set to non-zero then parses only 'page_limit' first pages of the PDF
         """
         self.parsed_data = []
         self.number_of_pages = 0
         self.print_parse = print_parse
+        self.page_limit = page_limit
 
         self.pdf_parser = PDFParser(file_to_parse)
         self.resource_manager = PDFResourceManager()
@@ -112,11 +114,10 @@ class PDFMinerWrapper:
 
         document = PDFDocument(self.pdf_parser)
         for pdf_page in PDFPage.create_pages(document):
+            if self.page_limit > 0 and self.number_of_pages > self.page_limit:
+                break
             self.number_of_pages += 1
 
-            # debug
-            #if self.number_of_pages > 10:
-            #    break
             logging.debug("Parsing PDF page %i", self.number_of_pages)
 
             self.intepreter.process_page(pdf_page)
