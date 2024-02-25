@@ -54,6 +54,9 @@ class PDFText:
     def __str__(self):
         return f"{self.text}|(font:{self.fontname},height:{self.height})"
 
+    def __repr__(self):
+        return str(self)
+
 
 class PDFLineBreak:
     """
@@ -64,6 +67,9 @@ class PDFLineBreak:
 
     def __str__(self):
         return "<PDFLineBreak>"
+
+    def __repr__(self):
+        return str(self)
 
 
 class PDFTextBoxBreak:
@@ -76,6 +82,9 @@ class PDFTextBoxBreak:
     def __str__(self):
         return "<PDFTextBoxBreak>"
 
+    def __repr__(self):
+        return str(self)
+
 
 class PDFPageBreak:
     """
@@ -86,6 +95,9 @@ class PDFPageBreak:
 
     def __str__(self):
         return "<PDFPageBreak>"
+
+    def __repr__(self):
+        return str(self)
 
 
 class PDFMinerWrapper:
