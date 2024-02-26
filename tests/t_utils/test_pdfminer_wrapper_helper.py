@@ -1,9 +1,9 @@
 from hipisejm.utils.pdfminer_wrapper import PDFText, PDFLineBreak, PDFTextBoxBreak, PDFPageBreak
-from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index
+from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index, extract_text_from_parsed_list
 import pytest
 
 
-TEST_DATA1 = [
+TEST_DATA_TEXT_BOXES1 = [
     PDFText("1 First", "CentSchbookEU-Normal", 10.5),   # index 0
     PDFLineBreak(),
     PDFText("1 Second", "CentSchbookEU-Normal", 10.5),
@@ -26,7 +26,7 @@ TEST_DATA1 = [
     ]
 
 
-TEST_DATA2 = [
+TEST_DATA_TEXT_BOXES2 = [
     PDFText("1 First", "CentSchbookEU-Normal", 10.5),   # index 0
     PDFLineBreak(),
     PDFText("1 Second", "CentSchbookEU-Normal", 10.5),
@@ -41,7 +41,7 @@ TEST_DATA2 = [
     ]
 
 
-TEST_DATA3 = [
+TEST_DATA_TEXT_BOXES3 = [
     PDFTextBoxBreak(), # index 0
     PDFText("1 First", "CentSchbookEU-Normal", 10.5),
     PDFLineBreak(),
@@ -57,36 +57,83 @@ TEST_DATA3 = [
     ]
 
 
+TEST_DATA_EXTRACT_TEXT1 = [
+    PDFText("Pani Katarzyna Pełczyńska-Nałęcz ", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("będzie ministrą funduszy i polityki regionalnej", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    PDFText("Pan Jan Kowalski", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    PDFPageBreak(),
+    ]
+
+
+TEST_DATA_EXTRACT_TEXT2 = [
+    PDFText("Pani Katarzyna Pełczyńska-Nałęcz (", "CentSchbookEU-Normal", 10.5),
+    PDFText("Oklaski", "CentSchbookEU-Italic", 10.6995),
+    PDFText(") bę-", "CentSchbookEU-Normal", 10.6995),
+    PDFLineBreak(),
+    PDFText("dzie ministrą funduszy i polityki regionalnej. Nie ", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("mogę na nią spojrzeć, bo nie jest posłanką. Jest pani ", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("minister? A, jest. (", "CentSchbookEU-Normal", 10.6995),
+    PDFText("Oklaski", "CentSchbookEU-Italic", 10.6995),
+    PDFText(") Jestem naprawdę bardzo ", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("usatysfakcjonowany, że będziemy razem pracowali ", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    ]
+
+
 def test_check_extract_from_middle():
-    actual = get_first_text_box_from_index(TEST_DATA1, 8)
-    assert actual == TEST_DATA1[7:13]
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 8)
+    assert actual == TEST_DATA_TEXT_BOXES1[7:13]
 
 
 def test_check_extract_from_last_not_closed():
-    actual = get_first_text_box_from_index(TEST_DATA1, 14)
-    assert actual == TEST_DATA1[14:19]
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 14)
+    assert actual == TEST_DATA_TEXT_BOXES1[14:19]
 
 
 def test_check_extract_from_first_not_opened():
-    actual = get_first_text_box_from_index(TEST_DATA1, 0)
-    assert actual == TEST_DATA1[0:6]
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 0)
+    assert actual == TEST_DATA_TEXT_BOXES1[0:6]
 
 
 def test_check_extract_from_index_on_box():
-    actual = get_first_text_box_from_index(TEST_DATA1, 7)
-    assert actual == TEST_DATA1[7:13]
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 7)
+    assert actual == TEST_DATA_TEXT_BOXES1[7:13]
 
 
 def test_check_extract_empty_if_two_boxes():
-    actual = get_first_text_box_from_index(TEST_DATA2, 6)
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES2, 6)
     assert actual == []
 
 
 def test_check_extract_empty_if_last_is_box():
-    actual = get_first_text_box_from_index(TEST_DATA2, 10)
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES2, 10)
     assert actual == []
 
 
 def test_check_extract_nonempty_if_first_is_box():
-    actual = get_first_text_box_from_index(TEST_DATA3, 0)
-    assert actual == TEST_DATA3[1:7]
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES3, 0)
+    assert actual == TEST_DATA_TEXT_BOXES3[1:7]
+
+
+def test_simple_extract_text():
+    actual_text = extract_text_from_parsed_list(TEST_DATA_EXTRACT_TEXT1)
+    expected_text = """Pani Katarzyna Pełczyńska-Nałęcz będzie ministrą funduszy i polityki regionalnej
+Pan Jan Kowalski
+
+"""
+    assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT1"
+
+
+def test_extract_text_with_fixing_word_splits():
+    actual_text = extract_text_from_parsed_list(TEST_DATA_EXTRACT_TEXT2)
+    expected_text = "Pani Katarzyna Pełczyńska-Nałęcz (Oklaski) będzie ministrą funduszy i polityki regionalnej. Nie mogę na nią spojrzeć, bo nie jest posłanką. Jest pani minister? A, jest. (Oklaski) Jestem naprawdę bardzo usatysfakcjonowany, że będziemy razem pracowali "
+
+    assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT2"
