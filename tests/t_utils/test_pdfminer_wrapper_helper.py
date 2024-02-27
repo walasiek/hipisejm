@@ -1,5 +1,5 @@
 from hipisejm.utils.pdfminer_wrapper import PDFText, PDFLineBreak, PDFTextBoxBreak, PDFPageBreak
-from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index, extract_text_from_parsed_list
+from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index, get_first_page_from_index, extract_text_from_parsed_list
 import pytest
 
 
@@ -57,6 +57,23 @@ TEST_DATA_TEXT_BOXES3 = [
     ]
 
 
+TEST_DATA_PAGES1 = [
+    PDFTextBoxBreak(), # index 0
+    PDFText("1 First", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("1 Second", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("1 Third", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    PDFPageBreak(),
+    PDFTextBoxBreak(),
+    PDFText("2 First", "CentSchbookEU-Normal", 10.5), # index 10
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    ]
+
+
 TEST_DATA_EXTRACT_TEXT1 = [
     PDFText("Pani Katarzyna Pełczyńska-Nałęcz ", "CentSchbookEU-Normal", 10.5),
     PDFLineBreak(),
@@ -88,39 +105,75 @@ TEST_DATA_EXTRACT_TEXT2 = [
     ]
 
 
-def test_check_extract_from_middle():
+def test_check_extract_textbox_from_middle():
     actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 8)
     assert actual == TEST_DATA_TEXT_BOXES1[7:13]
 
 
-def test_check_extract_from_last_not_closed():
+def test_check_extract_textbox_from_middle_with_breaking_box():
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 8, with_breaking_box=True)
+    assert actual == TEST_DATA_TEXT_BOXES1[7:14]
+
+
+def test_check_extract_textbox_from_last_not_closed():
     actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 14)
     assert actual == TEST_DATA_TEXT_BOXES1[14:19]
 
 
-def test_check_extract_from_first_not_opened():
+def test_check_extract_textbox_from_first_not_opened():
     actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 0)
     assert actual == TEST_DATA_TEXT_BOXES1[0:6]
 
 
-def test_check_extract_from_index_on_box():
-    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 7)
-    assert actual == TEST_DATA_TEXT_BOXES1[7:13]
+def test_check_extract_textbox_from_index_on_box():
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 6)
+    assert actual == TEST_DATA_TEXT_BOXES1[0:6]
 
 
-def test_check_extract_empty_if_two_boxes():
-    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES2, 6)
+def test_check_extract_textbox_from_index_on_box_with_breaking_box():
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 6, with_breaking_box=True)
+    assert actual == TEST_DATA_TEXT_BOXES1[0:7]
+
+
+def test_check_extract_textbox_empty_if_two_boxes():
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES2, 7)
     assert actual == []
 
 
-def test_check_extract_empty_if_last_is_box():
+def test_check_extract_textbox_nonempty_if_last_is_box():
     actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES2, 10)
+    assert actual == TEST_DATA_TEXT_BOXES2[8:10]
+
+
+def test_check_extract_textbox_empty_if_first_is_box():
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES3, 0)
     assert actual == []
 
 
-def test_check_extract_nonempty_if_first_is_box():
-    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES3, 0)
-    assert actual == TEST_DATA_TEXT_BOXES3[1:7]
+def test_check_extract_textbox_nonempty_if_first_is_box_with_breaking_box():
+    actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES3, 0, with_breaking_box=True)
+    assert actual == TEST_DATA_TEXT_BOXES3[0:1]
+
+
+def test_check_extract_page_from_middle():
+    actual = get_first_page_from_index(TEST_DATA_PAGES1, 2)
+    assert actual == TEST_DATA_PAGES1[0:8]
+
+
+def test_check_extract_page_from_middle_with_breaking_box():
+    actual = get_first_page_from_index(TEST_DATA_PAGES1, 2, with_breaking_box=True)
+    assert actual == TEST_DATA_PAGES1[0:9]
+    assert isinstance(actual[-1], PDFPageBreak)
+
+
+def test_check_extract_page_from_last_wihtout_closing():
+    actual = get_first_page_from_index(TEST_DATA_PAGES1, 10)
+    assert actual == TEST_DATA_PAGES1[9:13]
+
+
+def test_check_extract_page_from_last_wihtout_closing_with_breaking_box():
+    actual = get_first_page_from_index(TEST_DATA_PAGES1, 10, with_breaking_box=True)
+    assert actual == TEST_DATA_PAGES1[9:13]
 
 
 def test_simple_extract_text():

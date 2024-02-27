@@ -1,31 +1,51 @@
 from hipisejm.utils.pdfminer_wrapper import PDFText, PDFLineBreak, PDFTextBoxBreak, PDFPageBreak
 
 
-def get_first_text_box_from_index(raw_parsed_list, index=0):
+def get_first_text_box_from_index(raw_parsed_list, index=0, with_breaking_box=False):
+    return get_first_pdf_container_from_index(PDFTextBoxBreak, raw_parsed_list, index=index, with_breaking_box=with_breaking_box)
+
+
+def get_first_page_from_index(raw_parsed_list, index=0, with_breaking_box=False):
+    return get_first_pdf_container_from_index(PDFPageBreak, raw_parsed_list, index=index, with_breaking_box=with_breaking_box)
+
+
+def get_first_pdf_container_from_index(pdf_container_type, raw_parsed_list, index=0, with_breaking_box=False):
     """
-    Extracts all entries between <TextBoxBreaks>
+    Extracts all entries between <ContainerBreak>
     which surrounds given index.
-    If index points out to TextBoxBreak
-    then returns all elements in the text box before it.
+    If index points out to ContainerBreak
+    then returns all elements in the container before it.
+    Params:
+       pdf_container_type - PDFTextBoxBreak, PDFLineBreak or PDFPageBreak
+       raw_parsed_list - list of elements to get text box
+       index - index to check for surrounding elements
+       with_breaking_box - if set to True then last extracted index is breaking (closing) Element (useful to get metadata from it)
     """
+    assert pdf_container_type in [PDFTextBoxBreak, PDFLineBreak, PDFPageBreak]
+
     result = []
     after_elements = []
     before_elements = []
 
-    for entry in raw_parsed_list[index+1:]:
-        if isinstance(entry, PDFTextBoxBreak):
-            break
-        else:
-            after_elements.append(entry)
-
-    if not isinstance(raw_parsed_list[index], PDFTextBoxBreak):
+    if not isinstance(raw_parsed_list[index], pdf_container_type):
+        for entry in raw_parsed_list[index+1:]:
+            if isinstance(entry, pdf_container_type):
+                if with_breaking_box:
+                    after_elements.append(entry)
+                break
+            else:
+                after_elements.append(entry)
         result.append(raw_parsed_list[index])
-        if index > 0:
-            for entry in reversed(raw_parsed_list[:index]):
-                if isinstance(entry, PDFTextBoxBreak):
-                    break
-                else:
-                    before_elements.append(entry)
+    else:
+        if with_breaking_box:
+            result.append(raw_parsed_list[index])
+
+    if index > 0:
+        for entry in reversed(raw_parsed_list[:index]):
+            if isinstance(entry, pdf_container_type):
+                break
+            else:
+                before_elements.append(entry)
 
     result = list(reversed(before_elements)) + result + after_elements
     return result

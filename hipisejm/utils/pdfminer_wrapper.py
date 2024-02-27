@@ -76,11 +76,12 @@ class PDFTextBoxBreak:
     """
     Represents text box break.
     """
-    def __init__(self):
-        pass
+    def __init__(self, x0: float = None, y0: float = None):
+        self.x0 = x0
+        self.y0 = y0
 
     def __str__(self):
-        return "<PDFTextBoxBreak>"
+        return f"<PDFTextBoxBreak: ({self.x0}, {self.y0})>"
 
     def __repr__(self):
         return str(self)
@@ -145,9 +146,7 @@ class PDFMinerWrapper:
         # TODO
         # 1. zrobić test na odrzucanie containerów, linii
         # np. odrzucić nagłówki
-        # 2. dodać różne logiczne znaczniki np. koniec linii, koniec kontenera, koniec strony
         for text_line in text_container:
-
             current_fontname = None
             chunk = []
 
@@ -167,7 +166,7 @@ class PDFMinerWrapper:
                 self._new_pdf_text(chunk, current_fontname, text_line)
 
             self._add_to_parsed_data(PDFLineBreak())
-        self._add_to_parsed_data(PDFTextBoxBreak())
+        self._add_to_parsed_data(PDFTextBoxBreak(text_container.x0, text_container.y0))
 
     def _new_pdf_text(self, chunk, current_fontname, text_line):
         text = "".join(chunk)

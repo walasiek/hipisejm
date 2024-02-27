@@ -28,6 +28,12 @@ def parse_arguments():
         required=True,
         help='Filepath to XML file to save the parsed data.')
 
+    parser.add_argument(
+        '--raw', '-r',
+        action="store_true",
+        help='If set, then outputs only raw parse and finishes without actual parsing.')
+
+
     args = parser.parse_args()
 
     return args
@@ -37,6 +43,16 @@ def main():
     args = parse_arguments()
 
     parser = SejmParser()
+
+    if args.raw:
+        raw_output = parser.parse_file_to_raw(args.input)
+
+        with open(args.output, "w") as f:
+            for entry in raw_output:
+                f.write(str(entry))
+                f.write("\n")
+        return
+
     parser.parse_file(args.input)
     # TODO
 

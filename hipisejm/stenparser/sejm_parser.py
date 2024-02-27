@@ -1,7 +1,10 @@
 import re
 import logging
+from collections import Counter
 from pdfminer.layout import LAParams
 from hipisejm.utils.pdfminer_wrapper import PDFMinerWrapper
+from hipisejm.utils.pdfminer_wrapper import PDFText, PDFLineBreak, PDFTextBoxBreak, PDFPageBreak
+from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index, get_first_page_from_index
 
 
 class SejmParser:
@@ -9,6 +12,7 @@ class SejmParser:
     # inspired by: https://github.com/pdfminer/pdfminer.six/issues/276#issuecomment-518010761
     PDF_LINE_MARGIN = 2.0
     PDF_CHAR_MARGIN = 4.0
+    PDF_BOXES_FLOW = 0.5
 
     """
     Parses transcripts from: https://www.sejm.gov.pl/sejm10.nsf/stenogramy.xsp
@@ -30,12 +34,17 @@ class SejmParser:
 
         return raw_results
 
+    def parse_file_to_raw(self, filepath: str):
+        raw_results = self._parse_pdf_to_raw(filepath)
+        return raw_results
+
     def _parse_pdf_to_raw(self, filepath: str):
         raw_results = []
         with open(filepath, "rb") as pdffile:
             laparams = LAParams(
                 char_margin=self.PDF_CHAR_MARGIN,
-                line_margin=self.PDF_LINE_MARGIN)
+                line_margin=self.PDF_LINE_MARGIN,
+                boxes_flow=self.PDF_BOXES_FLOW)
             pdfminer_wrapper = PDFMinerWrapper(
                 pdffile,
                 laparams=laparams,
@@ -43,5 +52,6 @@ class SejmParser:
             pdfminer_wrapper.parse()
             self.number_of_pages = pdfminer_wrapper.number_of_pages
 
-            return pdfminer_wrapper.parsed_data
+            raw_results = pdfminer_wrapper.parsed_data
+            return raw_results
         return None
