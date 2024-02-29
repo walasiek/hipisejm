@@ -105,6 +105,34 @@ TEST_DATA_EXTRACT_TEXT2 = [
     ]
 
 
+TEST_DATA_EXTRACT_TEXT3 = [
+    PDFText("Pani Katarzyna Pełczyńska-Nałęcz ", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("będzie ministrą funduszy i polityki regionalnej", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    PDFText("Pan Jan Kowalski (", "CentSchbookEU-Normal", 10.5),
+    PDFText("Oklaski", "CentSchbookEU-Italic", 10.5),
+    PDFText(") ", "CentSchbookEU-Normal", 10.5),
+    PDFText("koniec", "CentSchbookEU-Bold", 10.5),
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    PDFPageBreak(),
+    ]
+
+
+TEST_DATA_EXTRACT_TEXT4 = [
+    PDFText("Pan Jan Kowalski (", "CentSchbookEU-Normal", 10.5),
+    PDFText("Dzwo-", "CentSchbookEU-Italic", 10.5),
+    PDFLineBreak(),
+    PDFText("nek", "CentSchbookEU-Italic", 10.5),
+    PDFText(") koniec", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    PDFPageBreak(),
+    ]
+
+
 def test_check_extract_textbox_from_middle():
     actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 8)
     assert actual == TEST_DATA_TEXT_BOXES1[7:13]
@@ -190,3 +218,20 @@ def test_extract_text_with_fixing_word_splits():
     expected_text = "Pani Katarzyna Pełczyńska-Nałęcz (Oklaski) będzie ministrą funduszy i polityki regionalnej. Nie mogę na nią spojrzeć, bo nie jest posłanką. Jest pani minister? A, jest. (Oklaski) Jestem naprawdę bardzo usatysfakcjonowany, że będziemy razem pracowali "
 
     assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT2"
+
+
+def test_simple_extract_text_with_font_styles_tags():
+    actual_text = extract_text_from_parsed_list(TEST_DATA_EXTRACT_TEXT3, with_font_styles_tags=True)
+    expected_text = """Pani Katarzyna Pełczyńska-Nałęcz będzie ministrą funduszy i polityki regionalnej
+Pan Jan Kowalski (<i>Oklaski</i>) <b>koniec</b>
+
+"""
+    assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT3"
+
+
+def test_simple_extract_text_with_font_styles_tags_fix_word_split():
+    actual_text = extract_text_from_parsed_list(TEST_DATA_EXTRACT_TEXT4, with_font_styles_tags=True)
+    expected_text = """Pan Jan Kowalski (<i>Dzwonek</i>) koniec
+
+"""
+    assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT4"
