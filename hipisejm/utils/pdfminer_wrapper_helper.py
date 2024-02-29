@@ -73,28 +73,33 @@ def extract_text_from_parsed_list(raw_parsed_list, with_font_styles_tags: bool =
                 if entry.italic:
                     dump_text = f"<i>{dump_text}</i>"
             result_chunks.append(dump_text)
-        elif isinstance(entry, PDFLineBreak):
-            # fix word splits
-            if len(result_chunks) > 0:
-                last_chunk = result_chunks[-1]
-                if len(last_chunk) > 1:    # should be something which is at least longer than one letter to avoid removing single dash
-                    match = re.search("-(</i>$|</b>$|</b></i>)?$", last_chunk)
-                    if match:
-                        matched_part = match.group(1)
-                        if matched_part is None:
-                            matched_part = ''
-                        fixed_last_chunk = last_chunk[:-(1+len(matched_part))]
-                        if len(matched_part):
-                            fixed_last_chunk += matched_part
-                        result_chunks[-1] = fixed_last_chunk
-        elif isinstance(entry, PDFTextBoxBreak):
-            result_chunks.append("\n")
-        elif isinstance(entry, PDFPageBreak):
-            result_chunks.append("\n")
         else:
-            raise ValueError(f"unknown instance in parsed entry: {entry}")
+            if isinstance(entry, PDFLineBreak):
+                # fix word splits
+                if len(result_chunks) > 0:
+                    last_chunk = result_chunks[-1]
+                    if len(last_chunk) > 1:    # should be something which is at least longer than one letter to avoid removing single dash
+                        match = re.search("-(</i>$|</b>$|</b></i>)?$", last_chunk)
+                        if match:
+                            matched_part = match.group(1)
+                            if matched_part is None:
+                                matched_part = ''
+                            fixed_last_chunk = last_chunk[:-(1+len(matched_part))]
+                            if len(matched_part):
+                                fixed_last_chunk += matched_part
+                            fixed_last_chunk = fixed_last_chunk + '<WORD_SPLIT>'
+                            result_chunks[-1] = fixed_last_chunk
+            elif isinstance(entry, PDFTextBoxBreak):
+                result_chunks.append("\n")
+            elif isinstance(entry, PDFPageBreak):
+                result_chunks.append("\n")
+            else:
+                raise ValueError(f"unknown instance in parsed entry: {entry}")
 
     result = "".join(result_chunks)
+
+    # remove word splits
+    result = re.sub(r"<WORD_SPLIT>\s*", "", result)
 
     # remove unnecessary tags
     if with_font_styles_tags:

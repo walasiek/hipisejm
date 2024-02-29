@@ -132,6 +132,19 @@ TEST_DATA_EXTRACT_TEXT4 = [
     PDFPageBreak(),
     ]
 
+TEST_DATA_EXTRACT_TEXT5 = [
+    PDFText("Pan Jan Kowalski (", "CentSchbookEU-Normal", 10.5),
+    PDFText("Dzwo-", "CentSchbookEU-Italic", 10.5),
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    PDFPageBreak(),
+    PDFText("nek", "CentSchbookEU-Italic", 10.5),
+    PDFText(") koniec", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFTextBoxBreak(),
+    PDFPageBreak(),
+    ]
+
 
 def test_check_extract_textbox_from_middle():
     actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 8)
@@ -235,3 +248,11 @@ def test_simple_extract_text_with_font_styles_tags_fix_word_split():
 
 """
     assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT4"
+
+
+def test_simple_extract_text_with_font_styles_tags_fix_word_split_on_page_break():
+    actual_text = extract_text_from_parsed_list(TEST_DATA_EXTRACT_TEXT5, with_font_styles_tags=True)
+    expected_text = """Pan Jan Kowalski (<i>Dzwonek</i>) koniec
+
+"""
+    assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT5"
