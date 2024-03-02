@@ -5,6 +5,8 @@ from pdfminer.layout import LAParams
 from hipisejm.utils.pdfminer_wrapper import PDFMinerWrapper
 from hipisejm.utils.pdfminer_wrapper import PDFText, PDFLineBreak, PDFTextBoxBreak, PDFPageBreak
 from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index, get_first_page_from_index
+from hipisejm.stenparser.session_file_parser import SessionFileParser
+from hipisejm.stenparser.transcript import SessionTranscript
 
 
 class SejmParser:
@@ -19,9 +21,9 @@ class SejmParser:
     """
     def __init__(self):
         self.number_of_pages = 0
-        self.pdf_parser = None
+        self.session_file_parser = SessionFileParser()
 
-    def parse_file(self, filepath: str):
+    def parse_file(self, filepath: str) -> SessionTranscript:
         """
         Parses file given from filepath.
         Returns: ???
@@ -29,10 +31,12 @@ class SejmParser:
         self.number_of_pages = 0
         raw_results = self._parse_pdf_to_raw(filepath)
         if raw_results is not None:
-            # tu zaczyna się zabawa
-            pass
 
-        return raw_results
+            transcript = self.session_file_parser.run_parse(raw_results)
+
+            return transcript
+
+        return None
 
     def parse_file_to_raw(self, filepath: str):
         raw_results = self._parse_pdf_to_raw(filepath)

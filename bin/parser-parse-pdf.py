@@ -53,8 +53,12 @@ def main():
                 f.write("\n")
         return
 
-    parser.parse_file(args.input)
-    # TODO
+    transcript = parser.parse_file(args.input)
+    if transcript:
+        logging.info("Save parsed XML to: %s", args.output)
+        transcript.dump_to_xml(args.output)
+    else:
+        logging.info("Couldn't parse the file...")
 
 
 main()
