@@ -10,7 +10,7 @@ class RawSpeechParser:
     def __init__(self):
         pass
 
-    def parse_raw_speech(self, speaker_name, raw_speech_txt) -> SessionSpeech:
+    def parse_raw_speech(self, speaker_name: str, raw_speech_txt: str) -> SessionSpeech:
         speech = SessionSpeech(speaker_name)
 
         raw_speech_txt = self._preprocess_raw_speech(raw_speech_txt)
@@ -47,13 +47,13 @@ class RawSpeechParser:
         return speech
 
     def _preprocess_raw_speech(self, raw_speech_txt):
-        raw_speech_txt = re.sub('<i>\s*</i>', ' ', raw_speech_txt)
-        raw_speech_txt = re.sub('<b>\s*</b>', ' ', raw_speech_txt)
+        raw_speech_txt = re.sub(r'<i>\s*</i>', ' ', raw_speech_txt)
+        raw_speech_txt = re.sub(r'<b>\s*</b>', ' ', raw_speech_txt)
         raw_speech_txt = self._fix_spaces(raw_speech_txt)
         return raw_speech_txt
 
     def _add_speech_text_to_speech(self, speech, speech_txt):
-        speech_txt = re.sub("</?[ib]>", "", speech_txt)
+        speech_txt = re.sub(r"</?[ib]>", "", speech_txt)
         speech_txt = self._fix_spaces(speech_txt)
         speech.add_speech_text(speech_txt)
 
@@ -70,10 +70,16 @@ class RawSpeechParser:
         return True
 
     def _convert_speech_part_to_interruption(self, part):
-        match = re.match(r"^[(]<i>(.*?)(?:</i>\s*:\s*|:\s*</i>)(.*)[)]$", part)
+        match = re.match(r"^[(]<i>(?P<speaker>.*?)(?:</i>\s*:\s*|:\s*</i>|(?:</i>\s*(?P<broken_font>[A-Za-zĄŻŚŹĘĆÓŁŃ][a-zążśźęćółń]+)\s*:))(?P<text>.*)[)]$", part)
         if match:
-            interrupted_by = self._fix_spaces(match.group(1))
-            interruption_text = self._fix_spaces(match.group(2))
+            speaker = match.group('speaker')
+            broken_font = match.group('broken_font')
+            if broken_font:
+                speaker = speaker + ' ' + broken_font
+
+            interrupted_by = self._fix_spaces(speaker)
+
+            interruption_text = self._fix_spaces(match.group('text'))
 
             # other italic tags should not occur in interruption
             # if there is italic tag, then maybe something is wrong with the parse
@@ -87,7 +93,7 @@ class RawSpeechParser:
 
         # Workaround for such case:
         # (<i>Oklaski</i>, <i>część posłów wstaje</i>)
-        part = re.sub(r"</i>\s*,?\s*<i>", " ", part)
+        part = re.sub(r"</i>\s*,?\s*<i>", ", ", part)
 
         match = re.match(r"^[(]<i>(.*)</i>([^<>]*)[)]$", part)
         if match:
@@ -107,6 +113,7 @@ class RawSpeechParser:
                 if len(additional_non_italic) > len(reaction_txt):
                     return None
                 reaction_txt = f"{reaction_txt} {additional_non_italic}"
+                reaction_txt = self._fix_spaces(reaction_txt)
             return SpeechReaction(reaction_txt)
 
         return None

@@ -1,5 +1,4 @@
 import os
-import pandas as pd
 from hipisejm.stenparser.sejm_parser import SejmParser
 
 
