@@ -147,9 +147,11 @@ class PDFMinerWrapper:
         # 1. zrobić test na odrzucanie containerów, linii
         # np. odrzucić nagłówki
         for text_line in text_container:
+            if not isinstance(text_line, LTTextLine):
+                continue
+
             current_fontname = None
             chunk = []
-
             for character in text_line:
                 if not isinstance(character, LTChar):
                     continue

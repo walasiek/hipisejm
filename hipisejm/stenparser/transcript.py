@@ -72,9 +72,21 @@ class SessionSpeech:
     def __init__(self, speaker: str):
         self.speaker = speaker
         self.content = []
+        # memoization of the bare speech without interruptions
+        self.bare_content = None
 
     def add_speech_text(self, text: str):
+        self.bare_content = None
         self.content.append(text)
+
+    def get_bare_content(self):
+        if self.bare_content is None:
+            chunks = []
+            for cont in self.content:
+                if isinstance(cont, str):
+                    chunks.append(cont)
+            self.bare_content = "".join(chunks)
+        return self.bare_content
 
     def add_interruption(self, interruption: SpeechInterruption):
         self.content.append(interruption)

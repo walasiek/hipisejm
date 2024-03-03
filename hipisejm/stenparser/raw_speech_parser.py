@@ -49,6 +49,11 @@ class RawSpeechParser:
     def _preprocess_raw_speech(self, raw_speech_txt):
         raw_speech_txt = re.sub(r'<i>\s*</i>', ' ', raw_speech_txt)
         raw_speech_txt = re.sub(r'<b>\s*</b>', ' ', raw_speech_txt)
+
+        # remove some special parts
+        raw_speech_txt = re.sub(r"Teksty\s+wystąpień\s+niewygłoszonych.*", "", raw_speech_txt)
+        raw_speech_txt = re.sub(r"[*][)]", " ", raw_speech_txt)
+
         raw_speech_txt = self._fix_spaces(raw_speech_txt)
         return raw_speech_txt
 
