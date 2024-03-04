@@ -115,6 +115,9 @@ class SessionTranscript:
     def __init__(self):
         self.session_officials = SessionOfficials()
         self.session_content = []
+        self.session_no = None
+        self.term_no = None
+        self.session_date = None
 
     def dump_to_xml(self, filepath: str= None):
         with open(filepath, "w") as f:
@@ -122,6 +125,12 @@ class SessionTranscript:
             f.write("""<session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd">""")
             f.write("\n")
+
+            f.write("<meta>/n")
+            f.write(f"<session_no>{session_no}</session_no>\n")
+            f.write(f"<term_no>{term_no}</term_no>\n")
+            f.write(f"<session_date>{session_date}</session_date>\n")
+            f.write("</meta>/n")
 
             f.write('<session_officials>\n')
             f.write(self.session_officials.to_xml())
