@@ -1,4 +1,5 @@
 from collections import defaultdict
+import xml.etree.ElementTree as ET
 
 
 class SessionOfficials:
@@ -45,7 +46,7 @@ class SpeechReaction:
         self.reaction_text = reaction_text
 
     def to_xml(self) -> str:
-        return f"<reaction>{self.reaction_text}</reaction>"
+        return '<utt t="reaction">' + self.reaction_text + '</utt>'
 
 
 class SpeechInterruption:
@@ -58,7 +59,7 @@ class SpeechInterruption:
         self.text = text
 
     def to_xml(self) -> str:
-        return '<interruption by="' + self.interrupted_by_speaker + '">' + f"{self.text}</interruption>"
+        return '<utt t="interrupt" by="' + self.interrupted_by_speaker + '">' + f"{self.text}</utt>"
 
 
 class SessionSpeech:
@@ -100,7 +101,7 @@ class SessionSpeech:
         result.append('<speech speaker="' + self.speaker + '">')
         for entry in self.content:
             if isinstance(entry, str):
-                result.append(entry)
+                result.append('<utt t="norm">' + entry + '</utt>')
             else:
                 result.append(entry.to_xml())
         result.append("</speech>")
@@ -146,8 +147,13 @@ class SessionTranscript:
         pass
 
     def load_from_xml(self, filepath: str):
-        # TODO unimplemented (yet)
-        pass
+        xml_tree = ET.parse(filepath)
+
+        session_tag = xml_tree.getroot()
+
+        self._load_xml_meta_tag(session_tag.find("meta"))
+        self._load_xml_session_officials_tag(session_tag.find("session_officials"))
+        self._load_xml_content_tag(session_tag.find("content"))
 
     def __str__(self):
         chunks = []
@@ -166,3 +172,30 @@ class SessionTranscript:
         for speech in self.session_content:
             f.write(speech.to_xml())
             f.write("\n")
+
+    def _load_xml_meta_tag(self, meta_tag):
+        session_no_tag = meta_tag.find("session_no")
+        if session_no_tag is not None:
+            self.session_no = int(session_no_tag.text)
+        session_date_tag = meta_tag.find("session_date")
+        if session_date_tag is not None:
+            self.session_date = session_date_tag.text
+        term_no_tag = meta_tag.find("term_no")
+        if term_no_tag is not None:
+            self.term_no = int(term_no_tag.text)
+
+    def _load_xml_session_officials_tag(self, session_officials_tag):
+        for official_tag in session_officials_tag.findall("official"):
+            self.session_officials.add_new(official_tag.get("title"), official_tag.get("name"))
+
+    def _load_xml_content_tag(self, content_tag):
+        for speech_tag in content_tag.findall("speech"):
+            speech = SessionSpeech(speech_tag.get("speaker"))
+            for utt_tag in speech_tag.findall("utt"):
+                if utt_tag.get("t") == "norm":
+                    speech.add_speech_text(utt_tag.text)
+                elif utt_tag.get("t") == "reaction":
+                    speech.add_reaction(SpeechReaction(utt_tag.text))
+                elif utt_tag.get("t") == "interrupt":
+                    speech.add_interruption(SpeechInterruption(utt_tag.get("by"), utt_tag.text))
+            self.add_speech(speech)
