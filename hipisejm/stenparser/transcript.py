@@ -126,11 +126,11 @@ class SessionTranscript:
                     xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd">""")
             f.write("\n")
 
-            f.write("<meta>/n")
-            f.write(f"<session_no>{session_no}</session_no>\n")
-            f.write(f"<term_no>{term_no}</term_no>\n")
-            f.write(f"<session_date>{session_date}</session_date>\n")
-            f.write("</meta>/n")
+            f.write("<meta>\n")
+            f.write(f"<session_no>{self.session_no}</session_no>\n")
+            f.write(f"<term_no>{self.term_no}</term_no>\n")
+            f.write(f"<session_date>{self.session_date}</session_date>\n")
+            f.write("</meta>\n")
 
             f.write('<session_officials>\n')
             f.write(self.session_officials.to_xml())

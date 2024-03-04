@@ -4,6 +4,8 @@ from hipisejm.stenparser.transcript import SessionTranscript
 from hipisejm.stenparser.raw_speech_parser import RawSpeechParser
 from hipisejm.utils.pdfminer_wrapper import PDFText, PDFLineBreak, PDFTextBoxBreak, PDFPageBreak
 from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index, get_first_page_from_index, extract_text_from_parsed_list
+from hipisejm.utils.roman_numbers import roman_to_arabic
+from hipisejm.utils.polish_dates import convert_polish_date_to_iso, find_polish_dates_in_text
 
 
 class SejmParseError(Exception):
@@ -24,8 +26,8 @@ class SessionFileParser:
         self._clear_parse_cache()
 
     def run_parse(self, raw_data) -> SessionTranscript:
+        self._get_transcript_metadata_from_first_page(raw_data)
         current_data = self._leave_only_transcript_data(raw_data)
-
         current_data = self._extract_initial_who_leads(current_data)
 
         page_no = 0
@@ -49,6 +51,31 @@ class SessionFileParser:
         result_transcript = self.parse_cache['transcript']
         self._clear_parse_cache()
         return result_transcript
+
+    def _get_transcript_metadata_from_first_page(self, raw_data):
+        first_page = get_first_page_from_index(raw_data, 0, with_breaking_box=True)
+        first_page_text = extract_text_from_parsed_list(first_page, with_font_styles_tags=True)
+
+        transcript = self.parse_cache['transcript']
+        for line in first_page_text.split("\n"):
+            match_term = re.search(r"kadencja\s+([XIV]+)\b", line, re.IGNORECASE)
+            if match_term:
+                term_roman = match_term.group(1)
+                term_no = roman_to_arabic(term_roman)
+                transcript.term_no = term_no
+            else:
+                match_session_no = re.search(r"\b(\d+)[.]\s*posiedze", line, re.IGNORECASE)
+                if match_session_no:
+                    session_no = int(match_session_no.group(1))
+                    transcript.session_no = session_no
+
+                all_dates_str = find_polish_dates_in_text(line)
+                if len(all_dates_str) > 0:
+                    session_date = convert_polish_date_to_iso(all_dates_str[0])
+                    transcript.session_date = session_date
+
+            if transcript.term_no is not None and transcript.session_no is not None and transcript.session_date is not None:
+                return
 
     def _fix_page(self, current_page, page_no):
         """

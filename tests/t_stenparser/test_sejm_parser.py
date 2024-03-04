@@ -16,6 +16,11 @@ def test_01_j_ksiazka():
 
     assert parser.number_of_pages == 132, f"number of pages in the file: {SAMPLE_PDF_FILEPATH}"
 
+    # check metadata
+    assert transcript.session_no == 1, "session_no"
+    assert transcript.term_no == 10, "term_no"
+    assert transcript.session_date == "2023-12-12", "session_date"
+
     # check session officials
     session_officials = transcript.session_officials
     officials_list = session_officials.officials_list
