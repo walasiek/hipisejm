@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<parliament_session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd"
-                    date="2024-01-21" session_number="10">
+<session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd">
+
+  <meta>
+    <session_no>1</session_no>
+    <term_no>10</term_no>
+    <session_date>2023-12-12</session_date>
+  </meta>
   <session_officials>
-    <official title="Speaker of the Sejm" name="Szymon Hołownia"/>
-    <official title="Deputy Speaker" name="Monika Wielichowska"/>
+    <official title="speaker" name="Szymon Hołownia"/>
+    <official title="vice_speaker" name="Monika Wielichowska"/>
     <!-- Additional officials -->
   </session_officials>
-  <speakers>
-    <speaker id="20240121_s1" name="Jan Kowalski" role="Member of Parliament"/>
-    <speaker id="20240121_s2" name="Anna Nowak"/>
-    <speaker id="20240121_generic" name="Głos z sali" role="Unidentified Speaker"/>
-    <!-- More speakers -->
-  </speakers>
   <content>
-    <speech speaker_id="20240121_s1">
-      <!-- Text of the speech by Jan Kowalski -->
-      <interruption by="20240121_s2">
-        <!-- Text of the interruption by Anna Nowak -->
-      </interruption>
-      <reaction type="applause"/>
+    <speech speaker="Marszałek Szymon Hołownia">
+      <utt t="norm">What has the speaker said...</utt>
+      <utt t="interrupt" by="Someone from the audience">Someone interrupts here...</utt>
+      <utt t="norm">...speaker tries to continue...</utt>
+      <utt t="reaction">Reaction from the audience</utt>
+      <utt t="norm">...speaker finishes.</utt>
       <!-- Continuation of the speech by Jan Kowalski -->
     </speech>
-    <break start_time="10:30" end_time="10:45"/>
-    <!-- More speeches and breaks -->
   </content>
-</parliament_session>
+</session>
