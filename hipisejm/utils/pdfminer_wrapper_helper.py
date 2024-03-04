@@ -76,6 +76,7 @@ def extract_text_from_parsed_list(raw_parsed_list, with_font_styles_tags: bool =
         else:
             if isinstance(entry, PDFLineBreak):
                 # fix word splits
+                was_word_split = False
                 if len(result_chunks) > 0:
                     last_chunk = result_chunks[-1]
                     if len(last_chunk) > 1:    # should be something which is at least longer than one letter to avoid removing single dash
@@ -88,7 +89,12 @@ def extract_text_from_parsed_list(raw_parsed_list, with_font_styles_tags: bool =
                             if len(matched_part):
                                 fixed_last_chunk += matched_part
                             fixed_last_chunk = fixed_last_chunk + '<WORD_SPLIT>'
+                            was_word_split = True
                             result_chunks[-1] = fixed_last_chunk
+                if not was_word_split:
+                    # add space only if previous one was not ending with a space
+                    if len(result_chunks) > 0 and len(result_chunks[-1]) > 0 and (not re.match(r" (?:</i>|</b>|</b></i>)?$", result_chunks[-1][-1])):
+                        result_chunks.append(" ")
             elif isinstance(entry, PDFTextBoxBreak):
                 result_chunks.append("\n")
             elif isinstance(entry, PDFPageBreak):
@@ -107,4 +113,6 @@ def extract_text_from_parsed_list(raw_parsed_list, with_font_styles_tags: bool =
         result = re.sub("</i><i>", "", result)
         result = re.sub("</b><b>", "", result)
 
+    # fix spaces
+    result = re.sub(r"[ ][\n]", "\n", result)
     return result

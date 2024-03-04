@@ -49,6 +49,10 @@ def test_01_j_ksiazka():
     assert "*)" not in last_speech_bare_content, "last_speech check is correct (no *) in content)"
     assert "Teksty wystąpień" not in last_speech_bare_content, "last_speech check is correct (no Teksty wystąpień in content)"
 
+    # spaces should not be lost if line break is introduced
+    speech71 = session_content[71]
+    assert "Bardzo dziękuję, panie pośle. Marek Jakubiak, Kukiz’15. Zapraszam." in speech71.get_bare_content(), "spaces should not be lost after newline"
+
     # Some tricky cases
     # tricky_case1: reaction in two lines in PDF
     # "To nie jest sprawa, panie marszałku, jak był pan łaskaw to dziś podsumować, prywatnego chamstwa [...]"

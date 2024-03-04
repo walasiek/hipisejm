@@ -146,6 +146,26 @@ TEST_DATA_EXTRACT_TEXT5 = [
     ]
 
 
+TEST_DATA_EXTRACT_TEXT6 = [
+    PDFText("Bardzo dziękuję.", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("Jan Kowalski, Partia XYZ.", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("Zapraszam.", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    ]
+
+
+TEST_DATA_EXTRACT_TEXT7 = [
+    PDFText("Bardzo dzię-", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("kuję. Jan Kowalski, Partia XYZ.", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    PDFText("Zapraszam.", "CentSchbookEU-Normal", 10.5),
+    PDFLineBreak(),
+    ]
+
+
 def test_check_extract_textbox_from_middle():
     actual = get_first_text_box_from_index(TEST_DATA_TEXT_BOXES1, 8)
     assert actual == TEST_DATA_TEXT_BOXES1[7:13]
@@ -256,3 +276,15 @@ def test_simple_extract_text_with_font_styles_tags_fix_word_split_on_page_break(
 
 """
     assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT5"
+
+
+def test_simple_extract_text_keep_spaces_after_line_breaks():
+    actual_text = extract_text_from_parsed_list(TEST_DATA_EXTRACT_TEXT6)
+    expected_text = "Bardzo dziękuję. Jan Kowalski, Partia XYZ. Zapraszam. "
+    assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT6"
+
+
+def test_simple_extract_text_keep_spaces_after_line_breaks_but_not_break_word_split():
+    actual_text = extract_text_from_parsed_list(TEST_DATA_EXTRACT_TEXT7)
+    expected_text = "Bardzo dziękuję. Jan Kowalski, Partia XYZ. Zapraszam. "
+    assert actual_text == expected_text, f"Test extract_text_from_parsed_list TEST_DATA_EXTRACT_TEXT7"

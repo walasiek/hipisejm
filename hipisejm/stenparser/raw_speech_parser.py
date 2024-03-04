@@ -60,7 +60,8 @@ class RawSpeechParser:
     def _add_speech_text_to_speech(self, speech, speech_txt):
         speech_txt = re.sub(r"</?[ib]>", "", speech_txt)
         speech_txt = self._fix_spaces(speech_txt)
-        speech.add_speech_text(speech_txt)
+        if len(speech_txt) > 0:
+            speech.add_speech_text(speech_txt)
 
     def _can_speech_part_be_interruption_or_reaction(self, part: str) -> bool:
         if len(part) < 3:
@@ -95,10 +96,10 @@ class RawSpeechParser:
         return None
 
     def _convert_speech_part_to_reaction(self, part):
-
         # Workaround for such case:
         # (<i>Oklaski</i>, <i>część posłów wstaje</i>)
-        part = re.sub(r"</i>\s*,?\s*<i>", ", ", part)
+        part = re.sub(r"</i>\s*,\s*<i>", ", ", part)
+        part = re.sub(r"</i>\s*<i>", " ", part)
 
         match = re.match(r"^[(]<i>(.*)</i>([^<>]*)[)]$", part)
         if match:
@@ -118,7 +119,8 @@ class RawSpeechParser:
                 if len(additional_non_italic) > len(reaction_txt):
                     return None
                 reaction_txt = f"{reaction_txt} {additional_non_italic}"
-                reaction_txt = self._fix_spaces(reaction_txt)
+
+            reaction_txt = self._fix_spaces(reaction_txt)
             return SpeechReaction(reaction_txt)
 
         return None
