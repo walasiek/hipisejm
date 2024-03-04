@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd">
+                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd" source="01_j_ksiazka.pdf">
 <meta>
 <session_no>1</session_no>
 <term_no>10</term_no>

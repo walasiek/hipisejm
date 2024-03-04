@@ -10,6 +10,8 @@ def test_01_j_ksiazka():
     transcript = SessionTranscript()
     transcript.load_from_xml(SAMPLE_PARSED_FILEPATH)
 
+    assert transcript.source_filename == "01_j_ksiazka.pdf", "source_filename"
+
     # check metadata
     assert transcript.session_no == 1, "session_no"
     assert transcript.term_no == 10, "term_no"

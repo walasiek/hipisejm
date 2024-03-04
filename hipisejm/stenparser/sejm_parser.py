@@ -1,5 +1,6 @@
 import re
 import logging
+import os
 from collections import Counter
 from pdfminer.layout import LAParams
 from hipisejm.utils.pdfminer_wrapper import PDFMinerWrapper
@@ -33,7 +34,7 @@ class SejmParser:
         if raw_results is not None:
 
             transcript = self.session_file_parser.run_parse(raw_results)
-
+            transcript.set_source_filename(os.path.basename(filepath))
             return transcript
 
         return None

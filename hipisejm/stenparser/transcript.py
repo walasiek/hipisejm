@@ -119,13 +119,16 @@ class SessionTranscript:
         self.session_no = None
         self.term_no = None
         self.session_date = None
+        self.source_filename = None
 
     def dump_to_xml(self, filepath: str= None):
         with open(filepath, "w") as f:
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             f.write("""<session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd">""")
-            f.write("\n")
+                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd" """)
+            if self.source_filename is not None:
+                f.write('source="' + self.source_filename + '"')
+            f.write(">\n")
 
             f.write("<meta>\n")
             f.write(f"<session_no>{self.session_no}</session_no>\n")
@@ -143,17 +146,20 @@ class SessionTranscript:
             f.write('</content>\n')
 
             f.write('</session>\n')
-        # TODO
-        pass
 
     def load_from_xml(self, filepath: str):
         xml_tree = ET.parse(filepath)
 
         session_tag = xml_tree.getroot()
 
+        self.source_filename = session_tag.get("source")
+
         self._load_xml_meta_tag(session_tag.find("meta"))
         self._load_xml_session_officials_tag(session_tag.find("session_officials"))
         self._load_xml_content_tag(session_tag.find("content"))
+
+    def set_source_filename(self, source_filename: str):
+        self.source_filename = source_filename
 
     def __str__(self):
         chunks = []

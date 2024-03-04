@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd">
+         xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd"
+         source="filename_from_which_file_was_created.pdf">
 
   <meta>
     <session_no>1</session_no>
@@ -21,5 +22,6 @@
       <utt t="norm">...speaker finishes.</utt>
       <!-- Continuation of the speech by Jan Kowalski -->
     </speech>
+    <!-- Next speeches of other persons -->
   </content>
 </session>
