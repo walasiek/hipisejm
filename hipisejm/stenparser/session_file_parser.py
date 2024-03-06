@@ -129,6 +129,7 @@ class SessionFileParser:
 
         for e in sorted(right_column, key=lambda x: -int(x[1].y0)):
             ordered_right_column.append(e)
+
         return ordered_left_column, ordered_right_column
 
     def _process_transcript_parse_on_page(self, text_boxes):
@@ -193,7 +194,14 @@ class SessionFileParser:
         else:
             raise SejmParseError(message=f"Unexpected form of introduction of leaders of the session: {who_leads_box_text}")
 
-        rest_to_parse = current_data[len(first_box) + len(who_leads_box):]
+        index_to_cut = len(who_leads_box_text)
+        for i, entry in enumerate(who_leads_box):
+            if isinstance(entry, PDFText):
+                if entry.text.startswith(')'):
+                    index_to_cut = i + 1
+                    break
+
+        rest_to_parse = current_data[len(first_box) + index_to_cut:]
         return rest_to_parse
 
     def _normalize_text(self, text):
