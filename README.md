@@ -1,9 +1,12 @@
 # hipisejm
+# Author: Marcin Walas <kontakt@marcinwalas.pl>
 
 Process textual data from Polish Sejm.
 
 Does the same thing as is available on https://kdp.nlp.ipipan.waw.pl/query_corpus/
 but maybe someone will find those scripts useful.
+
+I have written those scripts because 10th term of Polish Sejm was not available on KDP at that time.
 
 Format
 ======

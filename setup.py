@@ -1,14 +1,16 @@
 from distutils.core import setup
+import hipisejm
 
 
 setup(
     name='hipisejm',
-    version=__version__,
+    version=hipisejm.__version__,
     author='Marcin Walas',
     author_email='kontakt@marcinwalas.pl',
     packages=[
         'hipisejm',
         'hipisejm.stenparser',
+        'hipisejm.utils',
     ],
     scripts=[
         'bin/parser-parse-pdf.py'
