@@ -273,7 +273,14 @@ class SessionFileParser:
 
         if re.match(r"^\s*$", speaker_raw_name):
             if not re.match(r"^\s*$", speech_txt):
-                raise SejmParseError(message=f"Non empty speech for empty speaker: {speech_txt}")
+
+                # special case if there is empty speaker but there are no speeches yet
+                # and the speech txt is in parens then maybe there are some additional reactions in the initial part of the file
+                # we can omit them
+                if len(self.parse_cache['transcript'].session_content) == 0 and re.match(r"^\s*[(].*[)]\s*$", speech_txt):
+                    return
+                else:
+                    raise SejmParseError(message=f"Non empty speech for empty speaker: {speech_txt}")
 
             return
 
