@@ -1,3 +1,6 @@
+# never include raw data
+resources/raw-data/
+
 # temp files
 *~
 zrzut*

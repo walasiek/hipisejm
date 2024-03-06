@@ -22,6 +22,25 @@ Hint, to validate your XML file:
 
     xmllint --schema resources/hipisejm-transcript-schema.xsd resources/hipisejm-transcript-example.xml --noout
 
+Parsed corpus
+=============
+
+Repository contains parsed transcripts available on: https://www.sejm.gov.pl/sejm10.nsf/stenogramy.xsp
+
+Directory: resources/parsed-data/sejm/
+
+There are also helper scripts to download and parse PDFs available on the page in 'local' directory.
+
+Step 1: Download PDF files to resources/raw-data/sejm/
+
+   $ ./local/run-download-sejm.sh
+
+Step 2: Parse all files in raw-data to parsed-data using bin/parser-parse-pdf.py (run it in virtualenv: e.g. source enter.sh)
+
+   $ ./local/run-parse-sejm.sh
+
+Anyway you can simply use XML files available on the repo too.
+
 Developer hints
 ===============
 
