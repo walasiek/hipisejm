@@ -10,13 +10,13 @@ from hipisejm.stenparser.raw_speech_parser import RawSpeechParser
             "Jan Kowalski",
             "Dziękuję Panie Marszałku",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku
+<utt t="norm">Dziękuję Panie Marszałku</utt>
 </speech>"""),
         (
             "Jan Kowalski",
             "Dziękuję\nPanie\n\n\nMarszałku",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku
+<utt t="norm">Dziękuję Panie Marszałku</utt>
 </speech>"""),
     ])
 def test_simple_parse_no_interruptions(input_speaker, input_raw_speech, expected_parsed_xml):
@@ -33,19 +33,19 @@ def test_simple_parse_no_interruptions(input_speaker, input_raw_speech, expected
             "Jan Kowalski",
             "Dziękuję Panie Marszałku (<i>Oklaski</i>) za sprawne prowadzenie obrad.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku
-<reaction>Oklaski</reaction>
-za sprawne prowadzenie obrad.
+<utt t="norm">Dziękuję Panie Marszałku</utt>
+<utt t="reaction">Oklaski</utt>
+<utt t="norm">za sprawne prowadzenie obrad.</utt>
 </speech>"""),
         (
             "Jan Kowalski",
             "Dziękuję Panie Marszałku (<i>Oklaski</i>) za sprawne prowadzenie (<i>Wesołość na sali, gwar</i>)obrad.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku
-<reaction>Oklaski</reaction>
-za sprawne prowadzenie
-<reaction>Wesołość na sali, gwar</reaction>
-obrad.
+<utt t="norm">Dziękuję Panie Marszałku</utt>
+<utt t="reaction">Oklaski</utt>
+<utt t="norm">za sprawne prowadzenie</utt>
+<utt t="reaction">Wesołość na sali, gwar</utt>
+<utt t="norm">obrad.</utt>
 </speech>"""),
     ])
 def test_parse_with_reactions(input_speaker, input_raw_speech, expected_parsed_xml):
@@ -62,25 +62,25 @@ def test_parse_with_reactions(input_speaker, input_raw_speech, expected_parsed_x
             "Jan Kowalski",
             "Dziękuję Panie Marszałku (<i>Głos z sali</i>: Hańba!) za sprawne prowadzenie obrad.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku
-<interruption by="Głos z sali">Hańba!</interruption>
-za sprawne prowadzenie obrad.
+<utt t="norm">Dziękuję Panie Marszałku</utt>
+<utt t="interrupt" by="Głos z sali">Hańba!</utt>
+<utt t="norm">za sprawne prowadzenie obrad.</utt>
 </speech>"""),
         (
             "Jan Kowalski",
             "Dziękuję Panie Marszałku (<i>Głos z sali:</i>Hańba!) za sprawne prowadzenie obrad.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku
-<interruption by="Głos z sali">Hańba!</interruption>
-za sprawne prowadzenie obrad.
+<utt t="norm">Dziękuję Panie Marszałku</utt>
+<utt t="interrupt" by="Głos z sali">Hańba!</utt>
+<utt t="norm">za sprawne prowadzenie obrad.</utt>
 </speech>"""),
         (
             "Jan Kowalski",
             "Dziękuję Panie Marszałku (<i>Głos z sali:</i> Hańba!) za sprawne prowadzenie obrad.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku
-<interruption by="Głos z sali">Hańba!</interruption>
-za sprawne prowadzenie obrad.
+<utt t="norm">Dziękuję Panie Marszałku</utt>
+<utt t="interrupt" by="Głos z sali">Hańba!</utt>
+<utt t="norm">za sprawne prowadzenie obrad.</utt>
 </speech>"""),
     ])
 def test_parse_with_interruption(input_speaker, input_raw_speech, expected_parsed_xml):
@@ -97,11 +97,11 @@ def test_parse_with_interruption(input_speaker, input_raw_speech, expected_parse
             "Jan Kowalski",
             "Dziękuję Panie Marszałku (<i>Oklaski</i>) za sprawne (<i>Głos z sali</i>: Hańba!) prowadzenie obrad.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku
-<reaction>Oklaski</reaction>
-za sprawne
-<interruption by="Głos z sali">Hańba!</interruption>
-prowadzenie obrad.
+<utt t="norm">Dziękuję Panie Marszałku</utt>
+<utt t="reaction">Oklaski</utt>
+<utt t="norm">za sprawne</utt>
+<utt t="interrupt" by="Głos z sali">Hańba!</utt>
+<utt t="norm">prowadzenie obrad.</utt>
 </speech>"""),
     ])
 def test_parse_reactions_and_interruptions(input_speaker, input_raw_speech, expected_parsed_xml):
@@ -118,25 +118,25 @@ def test_parse_reactions_and_interruptions(input_speaker, input_raw_speech, expe
             "Jan Kowalski",
             "Dziękuję Panie <b>Marszałku</b>.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku.
+<utt t="norm">Dziękuję Panie Marszałku.</utt>
 </speech>"""),
         (
             "Jan Kowalski",
             "Dziękuję Panie <i>Marszałku</i>.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku.
+<utt t="norm">Dziękuję Panie Marszałku.</utt>
 </speech>"""),
         (
             "Jan Kowalski",
             "Dziękuję Panie <i><b>Marszałku</b></i>.",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku.
+<utt t="norm">Dziękuję Panie Marszałku.</utt>
 </speech>"""),
         (
             "Jan Kowalski",
             "Dziękuję Panie Marszałku. (<b>druk nr 123</b>)",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku. (druk nr 123)
+<utt t="norm">Dziękuję Panie Marszałku. (druk nr 123)</utt>
 </speech>"""),
     ])
 def test_parse_with_other_tags_which_should_be_ignored(input_speaker, input_raw_speech, expected_parsed_xml):
@@ -153,28 +153,28 @@ def test_parse_with_other_tags_which_should_be_ignored(input_speaker, input_raw_
             "Jan Kowalski",
             "Dziękuję Panie Marszałku. (<i>Wicemarszałek wyłącza mikrofon, poseł przemawia przy wyłączonym </i>mikrofonie)",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku.
-<reaction>Wicemarszałek wyłącza mikrofon, poseł przemawia przy wyłączonym mikrofonie</reaction>
+<utt t="norm">Dziękuję Panie Marszałku.</utt>
+<utt t="reaction">Wicemarszałek wyłącza mikrofon, poseł przemawia przy wyłączonym mikrofonie</utt>
 </speech>"""),
         ( # 02_b_ksiazka.pdf: not whole parens text is in italics
             "Jan Kowalski",
             "Dziękuję Panie Marszałku. (<i>Poseł Grzegorz </i>Braun: W trybie sprostowania. Zostało wymienione moje nazwisko w kontekście niewątpliwie zmanipulowanym, krzywdzącym.)",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku.
-<interruption by="Poseł Grzegorz Braun">W trybie sprostowania. Zostało wymienione moje nazwisko w kontekście niewątpliwie zmanipulowanym, krzywdzącym.</interruption>
+<utt t="norm">Dziękuję Panie Marszałku.</utt>
+<utt t="interrupt" by="Poseł Grzegorz Braun">W trybie sprostowania. Zostało wymienione moje nazwisko w kontekście niewątpliwie zmanipulowanym, krzywdzącym.</utt>
 </speech>"""),
         ( # 01_a_ksiazka_bis.pdf: multiple italics for reaction
             "Jan Kowalski",
             "Dziękuję Panie Marszałku. (<i>Oklaski</i>, <i>część posłów wstaje</i>)",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku.
-<reaction>Oklaski, część posłów wstaje</reaction>
+<utt t="norm">Dziękuję Panie Marszałku.</utt>
+<utt t="reaction">Oklaski, część posłów wstaje</utt>
 </speech>"""),
         ( # 01_a_ksiazka_bis.pdf: error in source file, unable to fix
             "Jan Kowalski",
             "Dziękuję Panie Marszałku. (<i>Głos z sali</i>: Szanowny panie marszałku, bardzo dziękujemy za piękne reprezentowanie nas, za sprawne prowadzenie posiedzenia.Szymon, jeszcze raz gratulacje. Życzę ci powodzenia. (<i>Oklaski</i>)",
             """<speech speaker="Jan Kowalski">
-Dziękuję Panie Marszałku.
+<utt t="norm">Dziękuję Panie Marszałku.</utt>
 </speech>"""), # all in parens is lost (unable to recover automatically)
     ])
 def test_parse_tricky_cases_from_real_examples(input_speaker, input_raw_speech, expected_parsed_xml):
