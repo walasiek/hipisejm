@@ -184,10 +184,9 @@ class SessionFileParser:
                 who_leads_box_text)
             if match_speaker:
                 self._add_parsed_official("speaker", match_speaker.group(1))
-            else:
-                raise SejmParseError(message=f"Cant find who is a speaker of the session near: {who_leads_box_text}")
+
             match_vice = re.search(
-                r"[wW](?:icemarszałek|icemarszałkini|icemarszałkowie) ([A-ZĄŻŚŹĘĆÓŁŃa-zążśźęćółń, -]+)[)]",
+                r"[wW](?:icemarszałek|icemarszałkini|icemarszałkowie)\s+(?:Sejmu?\s*)?([A-ZĄŻŚŹĘĆÓŁŃa-zążśźęćółń, -]+)[)]",
                 who_leads_box_text)
             if match_vice:
                 self._add_parsed_official_list("vice_speaker", match_vice.group(1))
