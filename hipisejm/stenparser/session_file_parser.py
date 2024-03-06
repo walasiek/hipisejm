@@ -178,7 +178,7 @@ class SessionFileParser:
 
         who_leads_box_text = extract_text_from_parsed_list(who_leads_box)
 
-        if re.search(r"Na posiedzeniu przewodniczą", who_leads_box_text, re.IGNORECASE):
+        if re.search(r"Na posiedzeniu przewodnicz[ąy]", who_leads_box_text, re.IGNORECASE):
             match_speaker = re.search(
                 r"[Mm](?:arszałek|arszałkini) [Ss]ejmu ((?:[A-ZĄŻŚŹĘĆÓŁŃ][a-zążśźęćółń]+[ -]?)+)",
                 who_leads_box_text)
