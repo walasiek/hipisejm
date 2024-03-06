@@ -272,7 +272,7 @@ class SessionFileParser:
         self.parse_cache['current_speaker_entries'] = self.parse_cache['new_speaker_entries']
 
         if re.match(r"^\s*$", speaker_raw_name):
-            if not re.match(r"^\s*$", speech_txt):
+            if not re.match(r"^\s*(?:<[ib]>)*\s*(?:</[ib]>)*\s*$", speech_txt):
 
                 # special case if there is empty speaker but there are no speeches yet
                 # and the speech txt is in parens then maybe there are some additional reactions in the initial part of the file
