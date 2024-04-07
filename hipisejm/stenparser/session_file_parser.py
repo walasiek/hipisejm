@@ -3,7 +3,7 @@ import re
 from hipisejm.stenparser.transcript import SessionTranscript
 from hipisejm.stenparser.raw_speech_parser import RawSpeechParser
 from hipisejm.utils.pdfminer_wrapper import PDFText, PDFLineBreak, PDFTextBoxBreak, PDFPageBreak
-from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index, get_first_page_from_index, extract_text_from_parsed_list
+from hipisejm.utils.pdfminer_wrapper_helper import get_first_text_box_from_index, get_first_page_from_index, extract_text_from_parsed_list, remove_all_tags
 from hipisejm.utils.roman_numbers import roman_to_arabic
 from hipisejm.utils.polish_dates import convert_polish_date_to_iso, find_polish_dates_in_text
 
@@ -330,6 +330,9 @@ class SessionFileParser:
             sejm_speaker_names = self.parse_cache['transcript'].session_officials.get_by_role('speaker')
             if len(sejm_speaker_names) > 0:
                 raw_name = 'Marszałek ' + sejm_speaker_names[0][1]
+
+        # remove tags if any are left
+        raw_name = remove_all_tags(raw_name)
         return raw_name
 
     def _start_new_speech(self):

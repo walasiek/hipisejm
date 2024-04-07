@@ -116,3 +116,8 @@ def extract_text_from_parsed_list(raw_parsed_list, with_font_styles_tags: bool =
     # fix spaces
     result = re.sub(r"[ ][\n]", "\n", result)
     return result
+
+
+def remove_all_tags(text: str) -> str:
+    text = re.sub(r"<.*?>", "", text)
+    return text

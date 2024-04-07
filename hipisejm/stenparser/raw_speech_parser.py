@@ -1,6 +1,7 @@
 import logging
 import re
 from hipisejm.stenparser.transcript import SessionSpeech, SpeechInterruption, SpeechReaction
+from hipisejm.utils.pdfminer_wrapper_helper import remove_all_tags
 
 
 class RawSpeechParser:
@@ -83,7 +84,7 @@ class RawSpeechParser:
             if broken_font:
                 speaker = speaker + ' ' + broken_font
 
-            interrupted_by = self._fix_spaces(speaker)
+            interrupted_by = self._fix_interruption_by(speaker)
 
             interruption_text = self._fix_spaces(match.group('text'))
 
@@ -124,6 +125,11 @@ class RawSpeechParser:
             return SpeechReaction(reaction_txt)
 
         return None
+
+    def _fix_interruption_by(self, txt: str) -> str:
+        txt = remove_all_tags(txt)
+        txt = self._fix_spaces(txt)
+        return txt
 
     def _fix_spaces(self, txt):
         txt = re.sub(r"^\s+", "", txt)

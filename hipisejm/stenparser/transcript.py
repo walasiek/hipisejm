@@ -1,5 +1,6 @@
 from collections import defaultdict
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 
 class SessionOfficials:
@@ -21,13 +22,9 @@ class SessionOfficials:
             chunks.append(f"  {entry[0]}: {entry[1]}")
         return "\n".join(chunks)
 
-    def to_xml(self) -> str:
-        chunks = []
+    def to_xml(self, parent_tag):
         for official in self.officials_list:
-            chunk = '<official title="' + official[0] + '" name="' + official[1] + '"/>'
-            chunks.append(chunk)
-
-        return "\n".join(chunks)
+            ET.SubElement(parent_tag, "official", title=official[0], name=official[1])
 
     def get_by_role(self, role_name: str):
         """
@@ -45,8 +42,8 @@ class SpeechReaction:
     def __init__(self, reaction_text: str):
         self.reaction_text = reaction_text
 
-    def to_xml(self) -> str:
-        return '<utt t="reaction">' + self.reaction_text + '</utt>'
+    def to_xml(self, parent_tag):
+        ET.SubElement(parent_tag, "utt", t="reaction").text = self.reaction_text
 
 
 class SpeechInterruption:
@@ -58,8 +55,8 @@ class SpeechInterruption:
         self.interrupted_by_speaker = interrupted_by_speaker
         self.text = text
 
-    def to_xml(self) -> str:
-        return '<utt t="interrupt" by="' + self.interrupted_by_speaker + '">' + f"{self.text}</utt>"
+    def to_xml(self, parent_tag):
+        ET.SubElement(parent_tag, "utt", t="interrupt", by=self.interrupted_by_speaker).text = self.text
 
 
 class SessionSpeech:
@@ -95,18 +92,14 @@ class SessionSpeech:
     def add_reaction(self, reaction: SpeechReaction):
         self.content.append(reaction)
 
-    def to_xml(self) -> str:
-        result = []
+    def to_xml(self, parent_tag):
 
-        result.append('<speech speaker="' + self.speaker + '">')
+        speech_tag = ET.SubElement(parent_tag, "speech", speaker=self.speaker)
         for entry in self.content:
             if isinstance(entry, str):
-                result.append('<utt t="norm">' + entry + '</utt>')
+                ET.SubElement(speech_tag, "utt", t="norm").text = entry
             else:
-                result.append(entry.to_xml())
-        result.append("</speech>")
-
-        return "\n".join(result)
+                entry.to_xml(speech_tag)
 
 
 class SessionTranscript:
@@ -122,30 +115,28 @@ class SessionTranscript:
         self.source_filename = None
 
     def dump_to_xml(self, filepath: str= None):
+        session_tag = ET.Element("session", source=self.source_filename)
+
+        meta_tag = ET.SubElement(session_tag, "meta")
+
+        ET.SubElement(meta_tag, "session_no").text = str(self.session_no)
+        ET.SubElement(meta_tag, "term_no").text = str(self.term_no)
+        ET.SubElement(meta_tag, "session_date").text = self.session_date
+
+        session_officials_tag = ET.SubElement(session_tag, "session_officials")
+        self.session_officials.to_xml(session_officials_tag)
+
+        content_tag = ET.SubElement(session_tag, "content")
+        for speech in self.session_content:
+            speech.to_xml(content_tag)
+
+        tree_str = ET.tostring(session_tag, 'utf-8')
+        pretty_xml = minidom.parseString(tree_str).toprettyxml(indent="  ")
+
         with open(filepath, "w") as f:
-            f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-            f.write("""<session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:noNamespaceSchemaLocation="hipisejm-transcript-schema.xsd" """)
-            if self.source_filename is not None:
-                f.write('source="' + self.source_filename + '"')
-            f.write(">\n")
-
-            f.write("<meta>\n")
-            f.write(f"<session_no>{self.session_no}</session_no>\n")
-            f.write(f"<term_no>{self.term_no}</term_no>\n")
-            f.write(f"<session_date>{self.session_date}</session_date>\n")
-            f.write("</meta>\n")
-
-            f.write('<session_officials>\n')
-            f.write(self.session_officials.to_xml())
+            f.write(pretty_xml)
             f.write("\n")
-            f.write('</session_officials>\n')
-
-            f.write('<content>\n')
-            self._dump_session_content_to_xml(f)
-            f.write('</content>\n')
-
-            f.write('</session>\n')
+        return
 
     def load_from_xml(self, filepath: str):
         xml_tree = ET.parse(filepath)
@@ -168,16 +159,6 @@ class SessionTranscript:
 
     def add_speech(self, speech: SessionSpeech):
         self.session_content.append(speech)
-
-    def _dump_officials_to_xml(self, f):
-        for session_official in self.session_officials:
-            f.write(session_official.to_xml())
-            f.write("\n")
-
-    def _dump_session_content_to_xml(self, f):
-        for speech in self.session_content:
-            f.write(speech.to_xml())
-            f.write("\n")
 
     def _load_xml_meta_tag(self, meta_tag):
         session_no_tag = meta_tag.find("session_no")

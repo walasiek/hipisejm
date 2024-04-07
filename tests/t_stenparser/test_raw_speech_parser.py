@@ -1,6 +1,19 @@
 import os
 import pytest
 from hipisejm.stenparser.raw_speech_parser import RawSpeechParser
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+
+
+def to_xml_test_wrapper(session_speech, expected_parsed_xml):
+    root_tag = ET.Element("root")
+
+    session_speech.to_xml(root_tag)
+    tree_str = ET.tostring(root_tag, 'utf-8')
+    pretty_xml = minidom.parseString(tree_str).toprettyxml(indent="")
+
+    expected_wrapped = '<?xml version="1.0" ?>' + f"\n<root>\n{expected_parsed_xml}\n</root>\n"
+    assert pretty_xml == expected_wrapped
 
 
 @pytest.mark.parametrize(
@@ -22,8 +35,7 @@ from hipisejm.stenparser.raw_speech_parser import RawSpeechParser
 def test_simple_parse_no_interruptions(input_speaker, input_raw_speech, expected_parsed_xml):
     raw_speech_parser = RawSpeechParser()
     actual_speech = raw_speech_parser.parse_raw_speech(input_speaker, input_raw_speech)
-
-    assert actual_speech.to_xml() == expected_parsed_xml
+    to_xml_test_wrapper(actual_speech, expected_parsed_xml)
 
 
 @pytest.mark.parametrize(
@@ -51,8 +63,7 @@ def test_simple_parse_no_interruptions(input_speaker, input_raw_speech, expected
 def test_parse_with_reactions(input_speaker, input_raw_speech, expected_parsed_xml):
     raw_speech_parser = RawSpeechParser()
     actual_speech = raw_speech_parser.parse_raw_speech(input_speaker, input_raw_speech)
-
-    assert actual_speech.to_xml() == expected_parsed_xml
+    to_xml_test_wrapper(actual_speech, expected_parsed_xml)
 
 
 @pytest.mark.parametrize(
@@ -86,8 +97,7 @@ def test_parse_with_reactions(input_speaker, input_raw_speech, expected_parsed_x
 def test_parse_with_interruption(input_speaker, input_raw_speech, expected_parsed_xml):
     raw_speech_parser = RawSpeechParser()
     actual_speech = raw_speech_parser.parse_raw_speech(input_speaker, input_raw_speech)
-
-    assert actual_speech.to_xml() == expected_parsed_xml
+    to_xml_test_wrapper(actual_speech, expected_parsed_xml)
 
 
 @pytest.mark.parametrize(
@@ -107,8 +117,7 @@ def test_parse_with_interruption(input_speaker, input_raw_speech, expected_parse
 def test_parse_reactions_and_interruptions(input_speaker, input_raw_speech, expected_parsed_xml):
     raw_speech_parser = RawSpeechParser()
     actual_speech = raw_speech_parser.parse_raw_speech(input_speaker, input_raw_speech)
-
-    assert actual_speech.to_xml() == expected_parsed_xml
+    to_xml_test_wrapper(actual_speech, expected_parsed_xml)
 
 
 @pytest.mark.parametrize(
@@ -142,8 +151,7 @@ def test_parse_reactions_and_interruptions(input_speaker, input_raw_speech, expe
 def test_parse_with_other_tags_which_should_be_ignored(input_speaker, input_raw_speech, expected_parsed_xml):
     raw_speech_parser = RawSpeechParser()
     actual_speech = raw_speech_parser.parse_raw_speech(input_speaker, input_raw_speech)
-
-    assert actual_speech.to_xml() == expected_parsed_xml
+    to_xml_test_wrapper(actual_speech, expected_parsed_xml)
 
 
 @pytest.mark.parametrize(
@@ -180,5 +188,4 @@ def test_parse_with_other_tags_which_should_be_ignored(input_speaker, input_raw_
 def test_parse_tricky_cases_from_real_examples(input_speaker, input_raw_speech, expected_parsed_xml):
     raw_speech_parser = RawSpeechParser()
     actual_speech = raw_speech_parser.parse_raw_speech(input_speaker, input_raw_speech)
-
-    assert actual_speech.to_xml() == expected_parsed_xml
+    to_xml_test_wrapper(actual_speech, expected_parsed_xml)
