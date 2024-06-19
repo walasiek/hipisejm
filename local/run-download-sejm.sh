@@ -24,7 +24,7 @@ download_url()
     cd $CUR_DIR
 }
 
-# updated 2024-03-06
+# updated 2024-06-19
 
 # year 2023
 download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/C7DCC9BE5661F67FC1258A67007287C0/%24File/01_a_ksiazka_bis.pdf
@@ -62,3 +62,36 @@ download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/8641ADF2777C9A5EC1258AB
 # posiedzenie 6
 download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/801CEE318507B4A7C1258ACA006D74AE/%24File/06_a_ksiazka.pdf
 download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/396CA9723ACCAD51C1258ACC0000B772/%24File/06_b_ksiazka.pdf
+
+# posiedzenie 7
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/B16EF42E15649275C1258AD80083078A/%24File/07_a_ksiazka_bis.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/AE12C6BC9F43141FC1258ADA000817E9/%24File/07_b_ksiazka_bis.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/DED92587B3019456C1258ADA00540928/%24File/07_c_ksiazka_bis.pdf
+
+# posiedzenie 8
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/200A2BAA707A2D95C1258AE600775320/%24File/08_a_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/0D28AED4D7D5D1D2C1258AE700671747/%24File/08_b_ksiazka.pdf
+
+# posiedzenie 9
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/3D1D243C6084DB49C1258AFB0078C0AD/%24File/09_a_ksiazka_bis.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/0A90B1DBFB57A5D0C1258AFC00750D36/%24File/09_b_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/F60A3A74B0945F4BC1258AFD0063BD4E/%24File/09_c_ksiazka.pdf
+
+# posiedzenie 10
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/91C08D7AA3F4475FC1258B090076D0D8/%24File/10_a_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/9EF353A76A58A1EEC1258B0A00695D00/%24File/10_b_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/732B6299E35C2031C1258B0B00668847/%24File/10_c_ksiazka.pdf
+
+# posiedzenie 11
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/5C5E8620CF0AC49DC1258B1700751E8E/%24File/11_a_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/3ED1126B70C40177C1258B19000127CE/%24File/11_b_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/92E9C717C85A0710C1258B1E0078E463/%24File/11_c_ksiazka.pdf
+
+# posiedzenie 12
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/0A9796C81781FB60C1258B25007A7C71/%24File/12_a_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/9923CDFE90B4E5E7C1258B2600651B76/%24File/12_b_ksiazka.pdf
+
+# posiedzenie 13
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/4565D787BA9F38D1C1258B3A006327E9/%24File/13_a_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/444A16C0227EA306C1258B3B00732E4B/%24File/13_b_ksiazka.pdf
+download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/A87D81B062B7FC5EC1258B3C004CC62F/%24File/13_c_ksiazka.pdf
