@@ -1,4 +1,4 @@
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Type
 from hipisejm.stenparser.transcript import SessionTranscript, SpeechReaction, SpeechInterruption, SessionSpeech
 
 
@@ -29,3 +29,28 @@ def get_utt_text(utt: Union[str, SpeechInterruption, SpeechReaction]) -> str:
         return utt.text
     else:
         raise ValueError(f"Unknown object type utt in: {utt}")
+
+
+def leave_only_specific_type_utt(
+        utt_list: List[Union[str, SpeechInterruption, SpeechReaction]],
+        expected_type: Type[Union[str, SpeechInterruption, SpeechReaction]],
+        exclude_mode: bool = False) -> List[Union[str, SpeechInterruption, SpeechReaction]]:
+    """
+    Returns only utts with specific type.
+
+    If exclude_mode is set then returns only utts which are NOT of given type
+    """
+    result = []
+    for utt in utt_list:
+        to_take = False
+        if exclude_mode:
+            if not isinstance(utt, expected_type):
+                to_take = True
+        else:
+            if isinstance(utt, expected_type):
+                to_take = True
+
+        if to_take:
+            result.append(utt)
+
+    return result
