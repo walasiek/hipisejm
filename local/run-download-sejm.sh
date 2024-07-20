@@ -19,7 +19,7 @@ download_url()
         echo "$URL already downloaded. Not processing..."
     else
         echo "Download $URL -> $OUTFILENAME"
-        wget "$URL"
+        wget --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36" "https://httpbin.io/user-agent" "$URL"
     fi
     cd $CUR_DIR
 }
@@ -95,3 +95,12 @@ download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/9923CDFE90B4E5E7C1258B2
 download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/4565D787BA9F38D1C1258B3A006327E9/%24File/13_a_ksiazka.pdf
 download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/444A16C0227EA306C1258B3B00732E4B/%24File/13_b_ksiazka.pdf
 download_url http://orka2.sejm.gov.pl/StenoInter10.nsf/0/A87D81B062B7FC5EC1258B3C004CC62F/%24File/13_c_ksiazka.pdf
+
+# posiedzenie 14
+download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/EAF0B6AB89A9E74DC1258B4800805E7C/%24File/14_a_ksiazka.pdf
+download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/38DF3ECD6B59ACFEC1258B490071AEF9/%24File/14_b_ksiazka.pdf
+download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/9EF8DF4DBC1097A4C1258B4A005BA0CF/%24File/14_c_ksiazka.pdf
+
+# posiedzenie 15
+download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/3129A6E257852A68C1258B57007DE3DB/%24File/15_a_ksiazka.pdf
+download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/AE7D836903477314C1258B58006AC348/%24File/15_b_ksiazka.pdf
