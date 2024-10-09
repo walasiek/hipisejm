@@ -19,6 +19,7 @@ setup(
     license='LICENSE',
     description='Parse Polish Sejm transcripts to machine readable corpus',
     long_description=open('README.md').read(),
+    long_description_content_type="text/markdown",
     install_requires=[
         "pytest",
         "pdfminer.six",
