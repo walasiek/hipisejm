@@ -131,3 +131,7 @@ download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/BE4FFB681F7F75A3C1258B
 download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/DBE1FE43BDC6F4F3C1258BB80066387D/%24File/20_a_ksiazka.pdf
 download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/20DB3CEDA9FC4B15C1258BB9006C0B16/%24File/20_b_ksiazka.pdf
 download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/7DFC26BA801B4983C1258BBA0053C352/%24File/20_c_ksiazka.pdf
+
+# posiedzenie 21
+download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/D18F5B664B4137D7C1258BCE00021143/%24File/21_a_ksiazka.pdf
+download_url https://orka2.sejm.gov.pl/StenoInter10.nsf/0/6FD4DB5238E00553C1258BCF0002992E/%24File/21_b_ksiazka.pdf

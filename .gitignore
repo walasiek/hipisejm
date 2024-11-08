@@ -4,6 +4,7 @@ resources/raw-data/
 # temp files
 *~
 zrzut*
+*.prv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
