@@ -35,7 +35,7 @@ Step 1: Download PDF files to resources/raw-data/sejm/
 
    $ ./local/run-download-sejm.sh
 
-Step 2: Parse all files in raw-data to parsed-data using bin/parser-parse-pdf.py (run it in virtualenv: e.g. source enter.sh)
+Step 2: Parse all files in raw-data to parsed-data using bin/hipisejm-parse-pdf.py (run it in virtualenv: e.g. source enter.sh)
 
    $ ./local/run-parse-sejm.sh
 

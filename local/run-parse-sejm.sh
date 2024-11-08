@@ -15,7 +15,7 @@ do
     if [[ ! -e $OUT_FP ]]; then
         echo "Processing $filepath -> $OUT_FP"
         # TODO
-        python bin/parser-parse-pdf.py -i $filepath -o $OUT_FP
+        python bin/hipisejm-parse-pdf.py -i $filepath -o $OUT_FP
     else
         echo "$OUT_FP already exists... not processing!"
     fi

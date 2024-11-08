@@ -13,7 +13,7 @@ setup(
         'hipisejm.utils',
     ],
     scripts=[
-        'bin/parser-parse-pdf.py'
+        'bin/hipisejm-parse-pdf.py'
     ],
     url='https://pypi.org/project/hipisejm/',
     license='LICENSE',
